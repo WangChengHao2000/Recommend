@@ -38,4 +38,10 @@ public class MovieController {
         List<Movie> movies = movieService.searchMovieByTitle(title);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
+
+    @RequestMapping(value = "/getRecommend", method = RequestMethod.GET)
+    public RecommendResponse<Object> getRecommend(Long userId) {
+        List<Movie> movies = movieService.getRecommendMovies(userId);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
+    }
 }

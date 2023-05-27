@@ -12,4 +12,5 @@ public interface MovieService {
 
     List<Movie> searchMovieByTitle(String title);
 
+    List<Movie> getRecommendMovies(Long userId);
 }

@@ -28,4 +28,10 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> searchMovieByTitle(String title) {
         return movieRepository.findAllByTitleContains(title);
     }
+
+    @Override
+    public List<Movie> getRecommendMovies(Long userId) {
+        //TODO: get Recommend Movies by user
+        return null;
+    }
 }
