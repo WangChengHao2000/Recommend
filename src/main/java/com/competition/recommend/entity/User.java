@@ -17,9 +17,13 @@ public class User {
 
     private String username;
 
-    private String nickname;
-
     private String password;
+
+    private int age;
+
+    private String gender;
+
+    private String occupation;
 
     private String type;
 
@@ -31,9 +35,8 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String nickname, String password, String type) {
+    public User(String username, String password, String type) {
         this.username = username;
-        this.nickname = nickname;
         this.password = password;
         this.type = type;
     }

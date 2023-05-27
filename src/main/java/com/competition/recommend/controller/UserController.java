@@ -38,7 +38,6 @@ public class UserController {
             return response;
 
         User createUser = new User(request.getParameter("createUsername"),
-                request.getParameter("createNickname"),
                 request.getParameter("createPassword"),
                 request.getParameter("createType"));
 
@@ -55,7 +54,6 @@ public class UserController {
             return response;
 
         User updateUser = new User(request.getParameter("updateUsername"),
-                request.getParameter("updateNickname"),
                 request.getParameter("updatePassword"),
                 request.getParameter("updateType"));
 
@@ -95,7 +93,7 @@ public class UserController {
 
         if (loginResult == null) {
             response = new RecommendResponse<>(RecommendStatus.UNAUTHORIZED, "登录异常");
-        } else if (!loginResult.getType().equals("管理员"))
+        } else if (loginResult.getType() == null || !loginResult.getType().equals("admin"))
             response = new RecommendResponse<>(RecommendStatus.UNAUTHORIZED, "权限不足");
         return response;
     }
