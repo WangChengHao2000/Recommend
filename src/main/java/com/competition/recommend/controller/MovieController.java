@@ -3,16 +3,12 @@ package com.competition.recommend.controller;
 import com.competition.recommend.entity.Movie;
 import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
-import com.competition.recommend.entity.User;
 import com.competition.recommend.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -29,8 +25,8 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
-    public RecommendResponse<Object> getAllPage(int page, int size) {
-        Page<Movie> movies = movieService.getAllMoviesByPage(page, size);
+    public RecommendResponse<Object> getAllByPage(int page, int size) {
+        Page<Movie> movies = movieService.getAllMovies(page, size);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 

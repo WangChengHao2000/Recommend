@@ -22,7 +22,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Page<Movie> getAllMoviesByPage(int page, int size) {
+    public Page<Movie> getAllMovies(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return movieRepository.findAll(pageRequest);
     }

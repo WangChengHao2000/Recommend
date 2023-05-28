@@ -6,6 +6,7 @@ import com.competition.recommend.entity.RecommendStatus;
 import com.competition.recommend.entity.User;
 import com.competition.recommend.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,12 @@ public class FriendshipController {
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public RecommendResponse<Object> getAll(Long userId) {
         List<User> friends = friendshipService.getAllFriends(userId);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, friends);
+    }
+
+    @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
+    public RecommendResponse<Object> getAllByPage(Long userId, int page, int size) {
+        Page<User> friends = friendshipService.getAllFriends(userId, page, size);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, friends);
     }
 
