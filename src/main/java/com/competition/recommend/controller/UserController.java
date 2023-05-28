@@ -39,6 +39,9 @@ public class UserController {
 
         User createUser = new User(request.getParameter("createUsername"),
                 request.getParameter("createPassword"),
+                Integer.parseInt(request.getParameter("createAge")),
+                request.getParameter("createGender"),
+                request.getParameter("createOccupation"),
                 request.getParameter("createType"));
 
         User existUser = userService.getUserByUsername(createUser.getUsername());
@@ -55,6 +58,9 @@ public class UserController {
 
         User updateUser = new User(request.getParameter("updateUsername"),
                 request.getParameter("updatePassword"),
+                Integer.parseInt(request.getParameter("updateAge")),
+                request.getParameter("updateGender"),
+                request.getParameter("updateOccupation"),
                 request.getParameter("updateType"));
 
         User existUser = userService.getUserByUsername(updateUser.getUsername());
@@ -84,6 +90,11 @@ public class UserController {
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     public RecommendResponse<Object> getUserByUsername(String username) {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getUserByUsername(username));
+    }
+
+    @RequestMapping(value = "/getUserById", method = RequestMethod.POST)
+    public RecommendResponse<Object> getUserById(Long userId) {
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getUserByUserId(userId));
     }
 
     private RecommendResponse<Object> isAdmin(HttpServletRequest request) {

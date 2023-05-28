@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class Rating {
+public class Friendship {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +17,6 @@ public class Rating {
 
     private Long userId;
 
-    private Long movieId;
-
-    private String rating;
+    private Long friendId;
 
 }

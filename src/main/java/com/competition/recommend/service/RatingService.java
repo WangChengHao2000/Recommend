@@ -10,7 +10,7 @@ public interface RatingService {
 
     List<Rating> getAllByMovieId(Long movieId);
 
-    void addRating(Long userId, Long movieId, int rating);
+    void addRating(Long userId, Long movieId, String rating);
 
     void deleteRating(Long userId, Long movieId);
 }

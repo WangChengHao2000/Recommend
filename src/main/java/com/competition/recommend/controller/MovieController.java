@@ -33,6 +33,12 @@ public class MovieController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movie);
     }
 
+    @RequestMapping(value = "/getMovieById", method = RequestMethod.GET)
+    public RecommendResponse<Object> getMovieById(Long movieId) {
+        Movie movie = movieService.getMovieById(movieId);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, movie);
+    }
+
     @RequestMapping(value = "/searchAll", method = RequestMethod.GET)
     public RecommendResponse<Object> searchAll(String title) {
         List<Movie> movies = movieService.searchMovieByTitle(title);

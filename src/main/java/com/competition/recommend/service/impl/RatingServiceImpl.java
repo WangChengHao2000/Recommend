@@ -25,7 +25,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public void addRating(Long userId, Long movieId, int rating) {
+    public void addRating(Long userId, Long movieId, String rating) {
         Rating saveRating = ratingRepository.findByUserIdAndAndMovieId(userId, movieId).orElse(new Rating());
         saveRating.setUserId(userId);
         saveRating.setMovieId(movieId);

@@ -25,6 +25,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie getMovieById(Long movieId) {
+        return movieRepository.findById(movieId).orElse(null);
+    }
+
+    @Override
     public List<Movie> searchMovieByTitle(String title) {
         return movieRepository.findAllByTitleContains(title);
     }

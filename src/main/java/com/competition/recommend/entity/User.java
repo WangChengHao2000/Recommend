@@ -41,4 +41,14 @@ public class User {
         this.type = type;
     }
 
+    public User(String username, String password, int age,
+                String gender, String occupation,
+                String type) {
+        this.username = username;
+        this.password = password;
+        this.age = age;
+        this.gender = gender;
+        this.occupation = occupation;
+        this.type = type;
+    }
 }

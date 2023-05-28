@@ -38,7 +38,7 @@ public class RatingController {
     public RecommendResponse<Object> addRating(HttpServletRequest request) {
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
                 Long.parseLong(request.getParameter("movieId")),
-                Integer.parseInt(request.getParameter("rating")));
+                request.getParameter("rating"));
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "add rating success");
     }
 
