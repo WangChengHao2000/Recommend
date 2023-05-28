@@ -6,6 +6,7 @@ import com.competition.recommend.entity.RecommendStatus;
 import com.competition.recommend.entity.User;
 import com.competition.recommend.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -27,6 +28,12 @@ public class MovieController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 
+    @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
+    public RecommendResponse<Object> getAllPage(int page, int size) {
+        Page<Movie> movies = movieService.getAllMoviesByPage(page, size);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
+    }
+
     @RequestMapping(value = "/getMovie", method = RequestMethod.GET)
     public RecommendResponse<Object> getMovie(String title) {
         Movie movie = movieService.getMovieByTitle(title);
@@ -42,6 +49,12 @@ public class MovieController {
     @RequestMapping(value = "/searchAll", method = RequestMethod.GET)
     public RecommendResponse<Object> searchAll(String title) {
         List<Movie> movies = movieService.searchMovieByTitle(title);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
+    }
+
+    @RequestMapping(value = "/searchAllByPage", method = RequestMethod.GET)
+    public RecommendResponse<Object> searchAllByPage(String title, int page, int size) {
+        Page<Movie> movies = movieService.searchMovieByTitle(title, page, size);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 

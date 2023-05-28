@@ -1,6 +1,7 @@
 package com.competition.recommend.service;
 
 import com.competition.recommend.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ public interface UserService {
     void deleteUser(Long userId);
 
     List<User> getAllUsers();
+
+    Page<User> getAllUsers(int page, int size);
 
     User getUserByUsername(String username);
 

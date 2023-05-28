@@ -6,6 +6,7 @@ import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
 import com.competition.recommend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,9 +29,21 @@ public class RatingController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
     }
 
+    @RequestMapping(value = "/getByUserByPage", method = RequestMethod.GET)
+    public RecommendResponse<Object> getByUserByPage(Long userId, int page, int size) {
+        Page<Rating> ratings = ratingService.getAllByUserId(userId, page, size);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
+    }
+
     @RequestMapping(value = "/getByMovie", method = RequestMethod.GET)
     public RecommendResponse<Object> getByMovie(Long movieId) {
         List<Rating> ratings = ratingService.getAllByMovieId(movieId);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
+    }
+
+    @RequestMapping(value = "/getByMovieByPage", method = RequestMethod.GET)
+    public RecommendResponse<Object> getByMovieByPage(Long movieId, int page, int size) {
+        Page<Rating> ratings = ratingService.getAllByMovieId(movieId, page, size);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
     }
 

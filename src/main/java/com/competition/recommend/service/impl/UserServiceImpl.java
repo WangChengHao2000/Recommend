@@ -4,6 +4,8 @@ import com.competition.recommend.entity.User;
 import com.competition.recommend.repository.UserRepository;
 import com.competition.recommend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +40,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Page<User> getAllUsers(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        return userRepository.findAll(pageRequest);
     }
 
     @Override

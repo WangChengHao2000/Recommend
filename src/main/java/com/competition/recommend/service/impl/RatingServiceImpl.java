@@ -4,6 +4,8 @@ import com.competition.recommend.entity.Rating;
 import com.competition.recommend.repository.RatingRepository;
 import com.competition.recommend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,20 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public Page<Rating> getAllByUserId(Long userId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        return ratingRepository.findAllByUserId(userId, pageRequest);
+    }
+
+    @Override
     public List<Rating> getAllByMovieId(Long movieId) {
         return ratingRepository.findAllByMovieId(movieId);
+    }
+
+    @Override
+    public Page<Rating> getAllByMovieId(Long movieId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        return ratingRepository.findAllByMovieId(movieId, pageRequest);
     }
 
     @Override
