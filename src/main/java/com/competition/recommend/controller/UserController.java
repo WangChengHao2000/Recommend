@@ -24,10 +24,10 @@ public class UserController {
         User loginResult = userService.login(user);
         Map<String, String> result = new HashMap<>();
         if (loginResult != null) {
-            result.put("登录状态", "登录成功");
-            result.put("用户类型", loginResult.getType());
+            result.put("statue", "登录成功");
+            result.put("type", loginResult.getType());
         } else
-            result.put("登录状态", "用户名或密码错误");
+            result.put("status", "用户名或密码错误");
         return new RecommendResponse<>(RecommendStatus.SUCCESS, result);
     }
 
