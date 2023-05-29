@@ -88,7 +88,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.POST)
-    public RecommendResponse<Object> getAllUsersByPage(int page, int size) {
+    public RecommendResponse<Object> getAllUsersByPage(HttpServletRequest request) {
+        int page = Integer.parseInt(request.getParameter("page"));
+        int size = Integer.parseInt(request.getParameter("size"));
         return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getAllUsers(page, size));
     }
 

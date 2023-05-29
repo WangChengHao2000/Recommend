@@ -19,5 +19,5 @@ public interface MovieService {
 
     Page<Movie> searchMovieByTitle(String title, int page, int size);
 
-    List<Movie> getRecommendMovies(Long userId);
+    List<Movie> getRecommendMovies(Long userId, Long[] strangerId);
 }
