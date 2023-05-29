@@ -94,8 +94,10 @@ public class UserController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getAllUsers(page, size));
     }
 
-    @RequestMapping(value = "/getUser", method = RequestMethod.POST)
-    public RecommendResponse<Object> getUserByUsername(String username) {
+    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
+    public RecommendResponse<Object> getUserByUsername(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        System.out.println(username);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getUserByUsername(username));
     }
 
