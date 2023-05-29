@@ -5,6 +5,17 @@ import java.util.*;
 
 public class THMDEM {
     private static final int pp = 32;
+    private static final BigInteger p = new BigInteger("3310262171");
+    private static final BigInteger q = new BigInteger("4077729373");
+    private static final BigInteger s= new BigInteger("2592947047");
+    private static final BigInteger N= new BigInteger("13498353287017448783");
+    private static final BigInteger T= new BigInteger("35000515294934637259353593801");
+    private static final BigInteger p_= new BigInteger("17447189102873734591");
+    private static final BigInteger q_= new BigInteger("17686622023115759689");
+    private static final BigInteger s_= new BigInteger("17319626326983024773");
+    private static final BigInteger N_= new BigInteger("308581839028351887989910350115522702199");
+    private static final BigInteger T_= new BigInteger("5344522143264281211884622677496087182469120718979518575827");
+    private static final BigInteger p0= new BigInteger("15779102339498818501");
 
 
     public static BigInteger GenPrime(int length){
@@ -171,5 +182,8 @@ public class THMDEM {
         return F.divide(r.pow(degF));
     }
 
-
+    public static void main(String[] args) {
+        BigInteger[] severKey =  SeverKeyGen();
+        System.out.println(Arrays.toString(severKey));
+    }
 }

@@ -78,9 +78,17 @@ public class MovieServiceImpl implements MovieService {
         for(int i =0;i<strangerNumber;i++){
             List<Rating> ratings = ratingRepository.findAllByUserId(strangerId[i]);
             M_stranger_avg[i][1] = BigInteger.valueOf(ratings.size());
+            M_stranger_avg[i][0] = BigInteger.valueOf(0);
             for(int j = 0;j<ratings.size();j++){
                 M_stranger_avg[i][0] = M_stranger_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
             }
+        }
+
+        List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
+        BigInteger[] M_user_avg = new BigInteger[2];
+        M_user_avg[1] = BigInteger.valueOf(userRatings.size());
+        for (int i = 0; i < userRatings.size(); i++) {
+            M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRatings.get(i).getRating()));
         }
 
 
