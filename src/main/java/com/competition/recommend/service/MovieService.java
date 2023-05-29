@@ -9,7 +9,7 @@ public interface MovieService {
 
     List<Movie> getAllMovies();
 
-    Page<Movie> getAllMoviesByPage(int page, int size);
+    Page<Movie> getAllMovies(int page, int size);
 
     Movie getMovieByTitle(String title);
 

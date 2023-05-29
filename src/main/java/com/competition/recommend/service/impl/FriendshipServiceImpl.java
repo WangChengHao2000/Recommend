@@ -6,10 +6,14 @@ import com.competition.recommend.repository.FriendshipRepository;
 import com.competition.recommend.repository.UserRepository;
 import com.competition.recommend.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendshipServiceImpl implements FriendshipService {
@@ -47,6 +51,15 @@ public class FriendshipServiceImpl implements FriendshipService {
                 userList.add(user);
         }
         return userList;
+    }
+
+    @Override
+    public Page<User> getAllFriends(Long userId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<Friendship> friendshipPage = friendshipRepository.findAllByUserId(userId, pageRequest);
+        return new PageImpl<>(friendshipPage.getContent().stream()
+                .map(friendship -> userRepository.findById(friendship.getFriendId()).orElse(null)).collect(Collectors.toList()),
+                pageRequest, friendshipPage.getTotalElements());
     }
 
     private boolean isFriend(Long userId, Long friendId) {
