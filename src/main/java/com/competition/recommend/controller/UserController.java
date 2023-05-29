@@ -41,8 +41,8 @@ public class UserController {
                 request.getParameter("createPassword"),
                 Integer.parseInt(request.getParameter("createAge")),
                 request.getParameter("createGender"),
-                request.getParameter("createOccupation"),
-                request.getParameter("createType"));
+                request.getParameter("createOccupation")
+                );
 
         User existUser = userService.getUserByUsername(createUser.getUsername());
         if (existUser == null)
@@ -60,8 +60,7 @@ public class UserController {
                 request.getParameter("updatePassword"),
                 Integer.parseInt(request.getParameter("updateAge")),
                 request.getParameter("updateGender"),
-                request.getParameter("updateOccupation"),
-                request.getParameter("updateType"));
+                request.getParameter("updateOccupation"));
 
         User existUser = userService.getUserByUsername(updateUser.getUsername());
         if (existUser != null) {

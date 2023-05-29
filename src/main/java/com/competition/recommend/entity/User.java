@@ -42,8 +42,7 @@ public class User {
     }
 
     public User(String username, String password, int age,
-                String gender, String occupation,
-                String type) {
+                String gender, String occupation) {
         this.username = username;
         this.password = password;
         this.age = age;
