@@ -27,6 +27,7 @@ public class UserController {
         if (loginResult != null) {
             result.put("statue", "登录成功");
             result.put("type", loginResult.getType());
+            result.put("userId", String.valueOf(loginResult.getId()));
         } else
             result.put("status", "用户名或密码错误");
         return new RecommendResponse<>(RecommendStatus.SUCCESS, result);
