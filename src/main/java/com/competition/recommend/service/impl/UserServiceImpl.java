@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElse(null);
         users.remove(user);
 
-        return userRepository.findAll();
+        return users;
     }
 
     @Override
