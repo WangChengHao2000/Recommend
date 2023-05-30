@@ -1,7 +1,14 @@
 package com.competition.recommend.util;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.*;
+
+import static com.competition.recommend.util.MySM2.createSm2Key;
 
 public class THMDEM {
     private static final int pp = 32;
@@ -188,6 +195,6 @@ public class THMDEM {
         m[0] = 1;
         m[1] = 2;
 //        Encrypt(m,userKey[0][0],userKey[0][1],userKey[0][3],userKey[0][4],userKey[0][5])
-        System.out.println();
+
     }
 }

@@ -15,4 +15,6 @@ public interface FriendshipService {
 
     Page<User> getAllFriends(Long userId, int page, int size);
 
+    List<User> getAllStranger(Long userId);
+
 }

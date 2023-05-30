@@ -84,8 +84,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/getAll", method = RequestMethod.POST)
-    public RecommendResponse<Object> getAllUsers() {
-        return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getAllUsers());
+    public RecommendResponse<Object> getAllUsers(Long userId) {
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getAllUsers(userId));
     }
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.POST)

@@ -15,7 +15,7 @@ public interface UserService {
 
     void deleteUser(Long userId);
 
-    List<User> getAllUsers();
+    List<User> getAllUsers(Long userId);
 
     Page<User> getAllUsers(int page, int size);
 

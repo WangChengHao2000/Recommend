@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,23 @@ public class FriendshipServiceImpl implements FriendshipService {
                 .map(friendship -> userRepository.findByUsername(friendship.getFriendName()).orElse(null)).collect(Collectors.toList()),
                 pageRequest, friendshipPage.getTotalElements());
     }
+
+    @Override
+    public List<User> getAllStranger(Long userId) {
+        List<User> userList = userRepository.findAll();
+        List<Friendship> friendshipList = friendshipRepository.findAllByUserId(userId);
+        for (Friendship friendship : friendshipList) {
+            User user = userRepository.findByUsername(friendship.getFriendName()).orElse(null);
+            if (user != null)
+                userList.remove(user);
+        }
+        User user = userRepository.findById(userId).orElse(null);
+        userList.remove(user);
+        return userList;
+    }
+
+
+
 
     private boolean isFriend(Long userId, String friendName) {
         Friendship friendship = friendshipRepository.findByUserIdAndFriendName(userId, friendName).orElse(null);

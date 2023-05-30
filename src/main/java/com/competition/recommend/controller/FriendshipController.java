@@ -28,6 +28,12 @@ public class FriendshipController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, friends);
     }
 
+    @RequestMapping(value = "/getAllStranger", method = RequestMethod.GET)
+    public RecommendResponse<Object> getAllStranger(Long userId) {
+        List<User> strangers = friendshipService.getAllStranger(userId);
+        return new RecommendResponse<>(RecommendStatus.SUCCESS, strangers);
+    }
+
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     public RecommendResponse<Object> getAllByPage(Long userId, int page, int size) {
         Page<User> friends = friendshipService.getAllFriends(userId, page, size);
