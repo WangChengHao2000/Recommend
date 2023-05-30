@@ -183,7 +183,11 @@ public class THMDEM {
     }
 
     public static void main(String[] args) {
-        BigInteger[] severKey =  SeverKeyGen();
-        System.out.println(Arrays.toString(severKey));
+        BigInteger[][] userKey = UserKeyGen(1);
+        int[] m = new int[2];
+        m[0] = 1;
+        m[1] = 2;
+//        Encrypt(m,userKey[0][0],userKey[0][1],userKey[0][3],userKey[0][4],userKey[0][5])
+        System.out.println();
     }
 }

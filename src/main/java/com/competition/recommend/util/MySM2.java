@@ -73,34 +73,34 @@ public class MySM2 {
         }
     }
 
-//    public static void main(String[] args) throws Exception {
-//        //定义需要加密的字符串
-//        String str = "aaaaa";
-//        //生成秘钥对
-//        KeyPair sm2Key = createSm2Key();
-//        //获取公钥
-//        PublicKey publicKey = sm2Key.getPublic();
-//        //获取公钥base加密后字符串
-//        String publicStr = Base64.encodeBase64String(publicKey.getEncoded());
-//        System.out.println("公钥为：{}");
-//        System.out.println(publicStr);
-//        //获取私钥
-//        PrivateKey privateKey = sm2Key.getPrivate();
-//        //获取私钥base加密后字符串
-//        String privateStr = Base64.encodeBase64String(privateKey.getEncoded());
-//        System.out.println("私钥为：{}");
-//        System.out.println(privateStr);
-//
-//        //公钥加密
-//        String passStr = encryptSm2(publicStr, str);
-//        System.out.println("加密后为{}");
-//        System.out.println(passStr);
-//
-//        //私钥解密
-//        String deStr = decryptSm2(privateStr, passStr);
-//        System.out.println("解密后为{}");
-//        System.out.println( deStr);
-//    }
+    public static void main(String[] args) throws Exception {
+        //定义需要加密的字符串
+        String str = "aaaaa";
+        //生成秘钥对
+        KeyPair sm2Key = createSm2Key();
+        //获取公钥
+        PublicKey publicKey = sm2Key.getPublic();
+        //获取公钥base加密后字符串
+        String publicStr = Base64.encodeBase64String(publicKey.getEncoded());
+        System.out.println("公钥为：{}");
+        System.out.println(publicStr);
+        //获取私钥
+        PrivateKey privateKey = sm2Key.getPrivate();
+        //获取私钥base加密后字符串
+        String privateStr = Base64.encodeBase64String(privateKey.getEncoded());
+        System.out.println("私钥为：{}");
+        System.out.println(privateStr);
+
+        //公钥加密
+        String passStr = encryptSm2(publicStr, str);
+        System.out.println("加密后为{}");
+        System.out.println(passStr);
+
+        //私钥解密
+        String deStr = decryptSm2(privateStr, passStr);
+        System.out.println("解密后为{}");
+        System.out.println( deStr);
+    }
 
 
 

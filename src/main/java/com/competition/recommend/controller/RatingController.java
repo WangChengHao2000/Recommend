@@ -4,6 +4,7 @@ import com.competition.recommend.entity.Movie;
 import com.competition.recommend.entity.Rating;
 import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
+import com.competition.recommend.service.MovieService;
 import com.competition.recommend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -22,10 +25,13 @@ public class RatingController {
 
     @Autowired
     private RatingService ratingService;
+    @Autowired
+    private MovieService movieService;
 
     @RequestMapping(value = "/getByUser", method = RequestMethod.GET)
     public RecommendResponse<Object> getByUser(Long userId) {
         List<Rating> ratings = ratingService.getAllByUserId(userId);
+
         return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
     }
 
@@ -51,6 +57,7 @@ public class RatingController {
     public RecommendResponse<Object> addRating(HttpServletRequest request) {
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
                 Long.parseLong(request.getParameter("movieId")),
+                request.getParameter("title"),
                 request.getParameter("rating"));
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "add rating success");
     }

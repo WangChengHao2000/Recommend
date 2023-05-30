@@ -25,7 +25,7 @@ public class UserController {
         User loginResult = userService.login(user);
         Map<String, String> result = new HashMap<>();
         if (loginResult != null) {
-            result.put("statue", "登录成功");
+            result.put("status", "登录成功");
             result.put("type", loginResult.getType());
             result.put("userId", String.valueOf(loginResult.getId()));
         } else
