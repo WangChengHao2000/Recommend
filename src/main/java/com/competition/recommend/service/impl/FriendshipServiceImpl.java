@@ -25,19 +25,19 @@ public class FriendshipServiceImpl implements FriendshipService {
     private UserRepository userRepository;
 
     @Override
-    public void addFriend(Long userId, Long friendId) {
-        if (!isFriend(userId, friendId)) {
+    public void addFriend(Long userId, String friendName) {
+        if (!isFriend(userId, friendName)) {
             Friendship friendship = new Friendship();
             friendship.setUserId(userId);
-            friendship.setFriendId(friendId);
+            friendship.setFriendName(friendName);
             friendshipRepository.save(friendship);
         }
     }
 
     @Override
-    public void deleteFriend(Long userId, Long friendId) {
-        if (isFriend(userId, friendId)) {
-            friendshipRepository.deleteFriendshipByUserIdAndFriendId(userId, friendId);
+    public void deleteFriend(Long userId, String friendName) {
+        if (isFriend(userId, friendName)) {
+            friendshipRepository.deleteFriendshipByUserIdAndFriendName(userId, friendName);
         }
     }
 
@@ -46,7 +46,7 @@ public class FriendshipServiceImpl implements FriendshipService {
         List<Friendship> friendshipList = friendshipRepository.findAllByUserId(userId);
         List<User> userList = new ArrayList<>();
         for (Friendship friendship : friendshipList) {
-            User user = userRepository.findById(friendship.getFriendId()).orElse(null);
+            User user = userRepository.findByUsername(friendship.getFriendName()).orElse(null);
             if (user != null)
                 userList.add(user);
         }
@@ -58,12 +58,12 @@ public class FriendshipServiceImpl implements FriendshipService {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<Friendship> friendshipPage = friendshipRepository.findAllByUserId(userId, pageRequest);
         return new PageImpl<>(friendshipPage.getContent().stream()
-                .map(friendship -> userRepository.findById(friendship.getFriendId()).orElse(null)).collect(Collectors.toList()),
+                .map(friendship -> userRepository.findByUsername(friendship.getFriendName()).orElse(null)).collect(Collectors.toList()),
                 pageRequest, friendshipPage.getTotalElements());
     }
 
-    private boolean isFriend(Long userId, Long friendId) {
-        Friendship friendship = friendshipRepository.findByUserIdAndFriendId(userId, friendId).orElse(null);
+    private boolean isFriend(Long userId, String friendName) {
+        Friendship friendship = friendshipRepository.findByUserIdAndFriendName(userId, friendName).orElse(null);
         return friendship != null;
     }
 }

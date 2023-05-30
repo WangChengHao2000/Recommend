@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface FriendshipService {
 
-    void addFriend(Long userId, Long friendId);
+    void addFriend(Long userId, String friendName);
 
-    void deleteFriend(Long userId, Long friendId);
+    void deleteFriend(Long userId, String friendName);
 
     List<User> getAllFriends(Long userId);
 

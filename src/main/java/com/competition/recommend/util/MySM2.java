@@ -100,6 +100,20 @@ public class MySM2 {
         String deStr = decryptSm2(privateStr, passStr);
         System.out.println("解密后为{}");
         System.out.println( deStr);
+
+        KeyPair keyPair = createSm2Key();
+        //获取公钥
+        PublicKey keyPairPublic = keyPair.getPublic();
+        //获取公钥base加密后字符串
+        String publicstr = Base64.encodeBase64String(keyPairPublic.getEncoded());
+        System.out.println("公钥为：{}");
+        System.out.println(publicstr);
+        //获取私钥
+        PrivateKey keyPairPrivate = keyPair.getPrivate();
+        //获取私钥base加密后字符串
+        String privatestr = Base64.encodeBase64String(keyPairPrivate.getEncoded());
+        System.out.println("私钥为：{}");
+        System.out.println(privatestr);
     }
 
 
