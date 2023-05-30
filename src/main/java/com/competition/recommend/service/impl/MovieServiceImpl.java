@@ -21,11 +21,11 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
-    @Autowired
-    private RatingRepository ratingRepository;
-
-    @Autowired
-    private FriendshipRepository friendshipRepository;
+//    @Autowired
+//    private RatingRepository ratingRepository;
+//
+//    @Autowired
+//    private FriendshipRepository friendshipRepository;
 
     @Override
     public List<Movie> getAllMovies() {
@@ -60,41 +60,37 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getRecommendMovies(Long userId, Long[] strangerId) {
-        int movieNumber = getAllMovies().size();
-        List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
-        int friendNumber = friendships.size();
-        BigInteger[][] M_friend_avg = new BigInteger[friendNumber][2];
-        for(int i =0;i<friendNumber;i++){
-            Long friendId = friendships.get(i).getFriendId();
-            List<Rating> ratings = ratingRepository.findAllByUserId(friendId);
-            M_friend_avg[i][1] = BigInteger.valueOf(ratings.size());
-            for(int j = 0;j<ratings.size();j++){
-                M_friend_avg[i][0] = M_friend_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
-            }
-        }
-
-        int strangerNumber = strangerId.length;
-        BigInteger[][] M_stranger_avg = new BigInteger[strangerNumber][2];
-        for(int i =0;i<strangerNumber;i++){
-            List<Rating> ratings = ratingRepository.findAllByUserId(strangerId[i]);
-            M_stranger_avg[i][1] = BigInteger.valueOf(ratings.size());
-            M_stranger_avg[i][0] = BigInteger.valueOf(0);
-            for(int j = 0;j<ratings.size();j++){
-                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
-            }
-        }
-
-        List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
-        BigInteger[] M_user_avg = new BigInteger[2];
-        M_user_avg[1] = BigInteger.valueOf(userRatings.size());
-        for (int i = 0; i < userRatings.size(); i++) {
-            M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRatings.get(i).getRating()));
-        }
-
-
-
-
+    public List<Movie> getRecommendMovies(Long userId) {
+//        int movieNumber = getAllMovies().size();
+//        List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
+//        int friendNumber = friendships.size();
+//        BigInteger[][] M_friend_avg = new BigInteger[friendNumber][2];
+//        for(int i =0;i<friendNumber;i++){
+//            Long friendId = friendships.get(i).getFriendId();
+//            List<Rating> ratings = ratingRepository.findAllByUserId(friendId);
+//            M_friend_avg[i][1] = BigInteger.valueOf(ratings.size());
+//            for(int j = 0;j<ratings.size();j++){
+//                M_friend_avg[i][0] = M_friend_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
+//            }
+//        }
+//
+//        int strangerNumber = strangerId.length;
+//        BigInteger[][] M_stranger_avg = new BigInteger[strangerNumber][2];
+//        for(int i =0;i<strangerNumber;i++){
+//            List<Rating> ratings = ratingRepository.findAllByUserId(strangerId[i]);
+//            M_stranger_avg[i][1] = BigInteger.valueOf(ratings.size());
+//            M_stranger_avg[i][0] = BigInteger.valueOf(0);
+//            for(int j = 0;j<ratings.size();j++){
+//                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
+//            }
+//        }
+//
+//        List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
+//        BigInteger[] M_user_avg = new BigInteger[2];
+//        M_user_avg[1] = BigInteger.valueOf(userRatings.size());
+//        for (int i = 0; i < userRatings.size(); i++) {
+//            M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRatings.get(i).getRating()));
+//        }
 
         return null;
     }

@@ -55,8 +55,8 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/getRecommend", method = RequestMethod.GET)
-    public RecommendResponse<Object> getRecommend(Long userId, Long[] strangerId) {
-        List<Movie> movies = movieService.getRecommendMovies(userId,strangerId);
+    public RecommendResponse<Object> getRecommend(Long userId) {
+        List<Movie> movies = movieService.getRecommendMovies(userId);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 }

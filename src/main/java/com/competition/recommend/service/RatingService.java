@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface RatingService {
 
-    List<Rating> getAllByUserName(String username);
+    List<Rating> getAllByUserId(Long userId);
 
-    Page<Rating> getAllByUserName(String username, int page, int size);
+    Page<Rating> getAllByUserId(Long userId, int page, int size);
 
     List<Rating> getAllByMovieId(Long movieId);
 

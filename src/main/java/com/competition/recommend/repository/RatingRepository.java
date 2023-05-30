@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-    List<Rating> findAllByUserName(String username);
+    List<Rating> findAllByUserId(Long userId);
 
-    Page<Rating> findAllByUserName(String username, PageRequest pageRequest);
+    Page<Rating> findAllByUserId(Long userId, PageRequest pageRequest);
 
     List<Rating> findAllByMovieId(Long movieId);
 

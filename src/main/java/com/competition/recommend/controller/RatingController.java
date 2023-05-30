@@ -24,14 +24,14 @@ public class RatingController {
     private RatingService ratingService;
 
     @RequestMapping(value = "/getByUser", method = RequestMethod.GET)
-    public RecommendResponse<Object> getByUser(String username) {
-        List<Rating> ratings = ratingService.getAllByUserName(username);
+    public RecommendResponse<Object> getByUser(Long userId) {
+        List<Rating> ratings = ratingService.getAllByUserId(userId);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
     }
 
     @RequestMapping(value = "/getByUserByPage", method = RequestMethod.GET)
-    public RecommendResponse<Object> getByUserByPage(String username, int page, int size) {
-        Page<Rating> ratings = ratingService.getAllByUserName(username, page, size);
+    public RecommendResponse<Object> getByUserByPage(Long userId, int page, int size) {
+        Page<Rating> ratings = ratingService.getAllByUserId(userId, page, size);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, ratings);
     }
 
