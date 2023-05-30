@@ -115,7 +115,7 @@ public class UserController {
             response = new RecommendResponse<>(RecommendStatus.UNAUTHORIZED, "登录异常");
         } else if (loginResult.getType() == null || !loginResult.getType().equals("admin"))
             response = new RecommendResponse<>(RecommendStatus.UNAUTHORIZED, "权限不足");
-        else response = new RecommendResponse<>(RecommendStatus.SUCCESS,"成功");
+
         return response;
     }
 

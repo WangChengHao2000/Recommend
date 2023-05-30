@@ -17,14 +17,14 @@ public class RatingServiceImpl implements RatingService {
     private RatingRepository ratingRepository;
 
     @Override
-    public List<Rating> getAllByUserId(Long userId) {
-        return ratingRepository.findAllByUserId(userId);
+    public List<Rating> getAllByUserName(String username) {
+        return ratingRepository.findAllByUserName(username);
     }
 
     @Override
-    public Page<Rating> getAllByUserId(Long userId, int page, int size) {
+    public Page<Rating> getAllByUserName(String username, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        return ratingRepository.findAllByUserId(userId, pageRequest);
+        return ratingRepository.findAllByUserName(username, pageRequest);
     }
 
     @Override

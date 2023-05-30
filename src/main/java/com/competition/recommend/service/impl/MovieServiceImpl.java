@@ -73,6 +73,7 @@ public class MovieServiceImpl implements MovieService {
                 M_friend_avg[i][0] = M_friend_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
             }
         }
+
         int strangerNumber = strangerId.length;
         BigInteger[][] M_stranger_avg = new BigInteger[strangerNumber][2];
         for(int i =0;i<strangerNumber;i++){
@@ -90,6 +91,9 @@ public class MovieServiceImpl implements MovieService {
         for (int i = 0; i < userRatings.size(); i++) {
             M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRatings.get(i).getRating()));
         }
+
+
+
 
 
         return null;
