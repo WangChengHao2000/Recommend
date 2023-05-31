@@ -9,13 +9,16 @@ import com.competition.recommend.repository.MovieRepository;
 import com.competition.recommend.repository.RatingRepository;
 import com.competition.recommend.repository.UserRepository;
 import com.competition.recommend.service.MovieService;
+import com.competition.recommend.util.THMDEM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MovieServiceImpl implements MovieService {
@@ -74,8 +77,16 @@ public class MovieServiceImpl implements MovieService {
             if(friend==null) continue;
             List<Rating> ratings = ratingRepository.findAllByUserId(friend.getId());
             M_friend_avg[i][1] = BigInteger.valueOf(ratings.size());
+            M_friend_avg[i][0] = BigInteger.valueOf(0);
             for(int j = 0;j<ratings.size();j++){
-                M_friend_avg[i][0] = M_friend_avg[i][0].add(new BigInteger(ratings.get(j).getC()));
+                Map<String,String> mp =new HashMap<>();
+                mp.put("C",ratings.get(j).getC());
+                mp.put("C_tag",ratings.get(j).getC_tag());
+                mp.put("C_ser",ratings.get(j).getC_ser());
+                mp.put("C_ser_tag",ratings.get(j).getC_ser_tag());
+                mp.put("C_csp",ratings.get(j).getC_csp());
+                Map<String,BigInteger> result = THMDEM.KeySwitch(mp,new BigInteger(friend.getP0()),THMDEM.sk_ser,THMDEM.sk_csp);
+                M_friend_avg[i][0] = M_friend_avg[i][0].add(result.get("C_ser"));
             }
         }
 

@@ -63,7 +63,7 @@ public class RatingController {
         BigInteger[] userKey = THMDEM.UserKeyGen();
         Map<String,String> map = THMDEM.Encrypt(Integer.parseInt(rating),userKey[0],userKey[1],userKey[3],userKey[4],
                 new BigInteger(user.getP0()),userKey[6],userKey[7],THMDEM.pk_ser,THMDEM.pk_csp);
-
+//C_ser,C_ser_tag,C_csp,C,C_tag
 
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
                 Long.parseLong(request.getParameter("movieId")),
