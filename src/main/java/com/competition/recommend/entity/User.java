@@ -27,6 +27,10 @@ public class User {
 
     private String type;
 
+    private String publickey;
+
+    private String privatekey;
+
     public User() {
     }
 
@@ -42,12 +46,14 @@ public class User {
     }
 
     public User(String username, String password, int age,
-                String gender, String occupation) {
+                String gender, String occupation, String publickey, String privatekey) {
         this.username = username;
         this.password = password;
         this.age = age;
         this.gender = gender;
         this.occupation = occupation;
-        this.type = type;
+        this.publickey = publickey;
+        this.privatekey = publickey;
+
     }
 }

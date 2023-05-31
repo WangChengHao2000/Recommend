@@ -40,13 +40,13 @@ public class FriendshipController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, friends);
     }
 
-    @RequestMapping(value = "/addFriend", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFriend", method = RequestMethod.GET)
     public RecommendResponse<Object> addFriend(Long userId, String friendName) {
         friendshipService.addFriend(userId, friendName);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "add friend success");
     }
 
-    @RequestMapping(value = "/deleteFriend", method = RequestMethod.POST)
+    @RequestMapping(value = "/deleteFriend", method = RequestMethod.GET)
     public RecommendResponse<Object> deleteFriend(Long userId, String friendName) {
         friendshipService.deleteFriend(userId, friendName);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "delete friend success");

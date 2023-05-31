@@ -5,10 +5,15 @@ import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
 import com.competition.recommend.entity.User;
 import com.competition.recommend.service.UserService;
+import com.competition.recommend.util.MySM2;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,12 +43,22 @@ public class UserController {
         RecommendResponse<Object> response = isAdmin(request);
         if (response != null)
             return response;
-
+        KeyPair sm2Key = MySM2.createSm2Key();
+        //获取公钥
+        PublicKey publicKey = sm2Key.getPublic();
+        //获取公钥base加密后字符串
+        String publicStr = Base64.encodeBase64String(publicKey.getEncoded());
+        //获取私钥
+        PrivateKey privateKey = sm2Key.getPrivate();
+        //获取私钥base加密后字符串
+        String privateStr = Base64.encodeBase64String(privateKey.getEncoded());
         User createUser = new User(request.getParameter("createUsername"),
                 request.getParameter("createPassword"),
                 Integer.parseInt(request.getParameter("createAge")),
                 request.getParameter("createGender"),
-                request.getParameter("createOccupation")
+                request.getParameter("createOccupation"),
+                publicStr,
+                privateStr
                 );
 
         User existUser = userService.getUserByUsername(createUser.getUsername());
@@ -62,10 +77,12 @@ public class UserController {
                 request.getParameter("updatePassword"),
                 Integer.parseInt(request.getParameter("updateAge")),
                 request.getParameter("updateGender"),
-                request.getParameter("updateOccupation"));
+                request.getParameter("updateOccupation"),null,null);
 
         User existUser = userService.getUserByUsername(updateUser.getUsername());
         if (existUser != null) {
+            updateUser.setPublickey(existUser.getPublickey());
+            updateUser.setPrivatekey(existUser.getPrivatekey());
             updateUser.setId(existUser.getId());
             return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.updateUser(updateUser));
         }
@@ -83,7 +100,7 @@ public class UserController {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "删除成功");
     }
 
-    @RequestMapping(value = "/getAll", method = RequestMethod.POST)
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public RecommendResponse<Object> getAllUsers(Long userId) {
         return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.getAllUsers(userId));
     }
