@@ -23,4 +23,10 @@ public class Rating {
 
     private String rating;
 
+    private String C;
+    private String C_tag;
+    private String C_ser;
+    private String C_ser_tag;
+    private String C_csp;
+
 }

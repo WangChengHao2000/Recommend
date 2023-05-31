@@ -18,6 +18,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship,Long> {
     Page<Friendship> findAllByUserId(Long userId, PageRequest pageRequest);
 
     Optional<Friendship> findByUserIdAndFriendName(Long userId, String friendName);
+    @Transactional
+    void deleteFriendshipsByFriendName(String friendName);
 
     @Transactional
     void deleteFriendshipByUserIdAndFriendName(Long userId, String friendName);

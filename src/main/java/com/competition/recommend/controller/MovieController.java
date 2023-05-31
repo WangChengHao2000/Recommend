@@ -3,6 +3,8 @@ package com.competition.recommend.controller;
 import com.competition.recommend.entity.Movie;
 import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
+import com.competition.recommend.entity.User;
+import com.competition.recommend.service.FriendshipService;
 import com.competition.recommend.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,8 @@ public class MovieController {
 
     @Autowired
     private MovieService movieService;
+    @Autowired
+    private FriendshipService friendshipService;
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public RecommendResponse<Object> getAll() {
@@ -56,7 +60,12 @@ public class MovieController {
 
     @RequestMapping(value = "/getRecommend", method = RequestMethod.GET)
     public RecommendResponse<Object> getRecommend(Long userId) {
-        List<Movie> movies = movieService.getRecommendMovies(userId);
+        List<User> strangers = friendshipService.getAllStranger(userId);
+        Long[] strangerId = new Long[strangers.size()];
+        for (int i = 0; i < strangers.size(); i++) {
+            strangerId[i] = strangers.get(i).getId();
+        }
+        List<Movie> movies = movieService.getRecommendMovies(userId,strangerId);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 }

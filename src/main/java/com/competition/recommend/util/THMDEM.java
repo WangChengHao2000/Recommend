@@ -2,6 +2,7 @@ package com.competition.recommend.util;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 
+import java.io.*;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -25,6 +26,11 @@ public class THMDEM {
     private static final BigInteger System_N_double= new BigInteger("138685236959796314692334750912470228459");
     private static final BigInteger System_T_double= new BigInteger("1916397575231121132532254678058908661571949863203948797263");
     private static final BigInteger System_p0= new BigInteger("2665505220591720907");
+    public static final String pk_ser = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAE8ILDmnio0DPTwYGyr3kf/oMl6NLrzEbB2d0PQ+GBTvWRzV7SoaIsOUVVYt8xBQJRZa9lCzJ4aSKDdhgIznENSQ==";
+    public static final String pk_csp = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEGkDaiK+vVaXz1SIvTxY5ekbmd1Y36ttkva3FztUEVNy6YVvMGnp//TohyLK4rt3XSghyLu9sB+PwtCDgx9o+ow";
+    public static final String sk_ser = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg6jKAhWFFGJwOO9/312//uj2CtrTu561z0n8279IxbJKgCgYIKoEcz1UBgi2hRANCAATwgsOaeKjQM9PBgbKveR/+gyXo0uvMRsHZ3Q9D4YFO9ZHNXtKhoiw5RVVi3zEFAlFlr2ULMnhpIoN2GAjOcQ1J";
+    public static final String sk_csp = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgWPxKfkITz3skP9dJbuFK856mQgoHZjPThHzxlqvCnjSgCgYIKoEcz1UBgi2hRANCAAQaQNqIr69VpfPVIi9PFjl6RuZ3Vjfq22S9rcXO1QRU3LphW8waen/9OiHIsriu3ddKCHIu72wH4/C0IODH2j6j";
+
 
 
     public static BigInteger GenPrime(int length){
@@ -33,16 +39,18 @@ public class THMDEM {
 
     }
 
-    public static BigInteger[][] UserKeyGen(int L){
-        BigInteger[][] result = new BigInteger[L][6];
-        for (int i=0;i<L;i++) {
-            result[i][0] = GenPrime(pp);//p
-            result[i][1] = GenPrime(pp);//q
-            result[i][2] = GenPrime(pp);//s
-            result[i][3] = result[i][0].multiply(result[i][1]);//N
-            result[i][4] = result[i][0].multiply(result[i][1]).multiply(result[i][2]);//T
-            result[i][5] = GenPrime(pp-1);//p_0
-        }
+    public static BigInteger[] UserKeyGen(){
+        BigInteger[] result = new BigInteger[8];
+
+        result[0] = GenPrime(pp);//p
+        result[1] = GenPrime(pp);//q
+        result[2] = GenPrime(pp);//s
+        result[3] = result[0].multiply(result[1]);//N
+        result[4] = result[0].multiply(result[1]).multiply(result[2]);//T
+        result[5] = GenPrime(pp-1);//p_0
+        result[6] = GenPrime(pp);//r
+        result[7] = GenPrime(pp);//r_tag
+
         return result;
     }
 
@@ -62,51 +70,37 @@ public class THMDEM {
         return result;  //<p,q,s,N,T,p',q',s',N',T',p0> 前五个计算函数用，后六个比较算法用。
     }
 
-    public static List<Map> Encrypt(int[] m, BigInteger p, BigInteger q, BigInteger N, BigInteger T, BigInteger p_0, String pk_ser, String pk_csp) {
-        BigInteger r = GenPrime(pp);
-        BigInteger r_tag = GenPrime(pp);
-        int l = m.length;
-        int[] s = new int[l];
-        for (int i = 0; i < l; i++)
-            s[i] = m[i] == 0 ? 1 : 0;
-        BigInteger[] C = new BigInteger[l];
-        BigInteger[] C_tag = new BigInteger[l];
+    public static Map<String,String> Encrypt(int m, BigInteger p, BigInteger q, BigInteger N, BigInteger T, BigInteger p_0,BigInteger r,BigInteger r_tag, String pk_ser, String pk_csp) {
+
+        int s = m == 0 ? 1 : 0;
+
         BigInteger p_ = p.modInverse(q),q_=q.modInverse(p);
-        for (int i = 0; i < l; i++) {
-            BigInteger k1 = GenPrime(pp);
-            BigInteger k2 = GenPrime(pp);
-            BigInteger k1_tag = GenPrime(pp);
-            BigInteger k2_tag = GenPrime(pp);
-            BigInteger t = GenPrime(pp);
-            BigInteger msp = BigInteger.valueOf(m[i] + s[i]).add(k1.multiply(p_0));
-            BigInteger tmp1 = p.multiply(p_).multiply(msp).add(q.multiply(q_).multiply(msp));
-            C[i] = tmp1.multiply(r).add(k2.multiply(N)).mod(T);
-            BigInteger add = t.pow(s[i]).add(k1_tag.multiply(p_0));
-            BigInteger tmp2 = p.multiply(p_).multiply(add).add(q.multiply(q_).multiply(add));
-            C_tag[i] = tmp2.multiply(r_tag).add(k2_tag.multiply(N)).mod(T);
-        }
+        BigInteger msp = BigInteger.valueOf(m + s).add(GenPrime(pp).multiply(p_0));
+        BigInteger tmp1 = p.multiply(p_).multiply(msp).add(q.multiply(q_).multiply(msp));
+        BigInteger C = tmp1.multiply(r).add(GenPrime(pp).multiply(N)).mod(T);
+        BigInteger add = GenPrime(pp).pow(s).add(GenPrime(pp).multiply(p_0));
+        BigInteger tmp2 = p.multiply(p_).multiply(add).add(q.multiply(q_).multiply(add));
+        BigInteger C_tag = tmp2.multiply(r_tag).add(GenPrime(pp).multiply(N)).mod(T);
 
         String C_ser = MySM2.encryptSm2(pk_ser, String.valueOf(r));
         String C_ser_tag = MySM2.encryptSm2(pk_ser, String.valueOf(r_tag));
         String C_csp = MySM2.encryptSm2(pk_csp, String.valueOf(N));
-        List<Map> result = new ArrayList<>();
-        Map<String, String> pkeMap = new HashMap<>();
-        pkeMap.put("C_ser",C_ser);
-        pkeMap.put("C_ser_tag", C_ser_tag);
-        pkeMap.put("C_csp",C_csp);
-        Map<String, BigInteger[]> CMap = new HashMap<>();
-        CMap.put("C",C);
-        CMap.put("C_tag",C_tag);
 
-        result.add(pkeMap);
-        result.add(CMap);
-        return result;//<C_ser,C_ser_tag,C_csp>,<C,C_tag>
+        Map<String, String> map = new HashMap<>();
+        map.put("C_ser",C_ser);
+        map.put("C_ser_tag", C_ser_tag);
+        map.put("C_csp",C_csp);
+        map.put("C",C.toString());
+        map.put("C_tag",C_tag.toString());
+
+
+        return map;//<C_ser,C_ser_tag,C_csp,C,C_tag>
     }
 
-    public static List<Map> KeySwitch(List<Map> C_sen, BigInteger p_0_i, String sk_ser, String sk_csp){
-        String S_r_i = MySM2.decryptSm2(sk_ser, (String) C_sen.get(0).get("C_ser"));
-        String S_r_i_tag = MySM2.decryptSm2(sk_ser, (String) C_sen.get(0).get("C_ser_tag"));
-        String S_N_i = MySM2.decryptSm2(sk_csp, (String) C_sen.get(0).get("C_csp"));
+    public static Map<String,BigInteger> KeySwitch(Map<String,String> C_sen, BigInteger p_0_i, String sk_ser, String sk_csp){
+        String S_r_i = MySM2.decryptSm2(sk_ser, (String) C_sen.get("C_ser"));
+        String S_r_i_tag = MySM2.decryptSm2(sk_ser, (String) C_sen.get("C_ser_tag"));
+        String S_N_i = MySM2.decryptSm2(sk_csp, (String) C_sen.get("C_csp"));
         BigInteger r_i = new BigInteger(S_r_i);
         BigInteger r_i_tag = new BigInteger(S_r_i_tag);
         BigInteger N_i = new BigInteger(S_N_i);
@@ -114,36 +108,27 @@ public class THMDEM {
         BigInteger r_i_ = r_i.modInverse(N_i);
         BigInteger r_i_tag_ = r_i_tag.modInverse(N_i);
 
-        BigInteger[] C_i = (BigInteger[]) C_sen.get(1).get("C");
-        BigInteger[] C_i_tag = (BigInteger[]) C_sen.get(1).get("C_tag");
+        BigInteger C_i = new BigInteger(C_sen.get("C"));
+        BigInteger C_i_tag = new BigInteger(C_sen.get("C_tag"));
 
-        int l = C_i.length;
-        BigInteger[] C_ser = new BigInteger[l];
-        BigInteger[] C_ser_tag = new BigInteger[l];
 
         BigInteger r = GenPrime(pp);
         BigInteger r_tag = GenPrime(pp);
-        for(int i= 0;i<l;i++){
-            BigInteger C1 = C_i[i].multiply(r_i_).mod(N_i).mod(p_0_i);
-            BigInteger C1_tag = C_i_tag[i].multiply(r_i_tag_).mod(N_i).mod(p_0_i);
-            BigInteger C2_tmp = System_p.multiply(System_p_).multiply(C1).add(System_q.multiply(System_q_).multiply(C1));
-            BigInteger C2_tag_tmp = System_p.multiply(System_p_).multiply(C1_tag).add(System_q.multiply(System_q_).multiply(C1_tag));
-            C_ser[i] = (C2_tmp.multiply(r).add(GenPrime(pp).multiply(System_N))).mod(System_T);
-            C_ser_tag[i] = (C2_tag_tmp.multiply(r_tag).add(GenPrime(pp).multiply(System_N))).mod(System_T);
 
-        }
+        BigInteger C1 = C_i.multiply(r_i_).mod(N_i).mod(p_0_i);
+        BigInteger C1_tag = C_i_tag.multiply(r_i_tag_).mod(N_i).mod(p_0_i);
+        BigInteger C2_tmp = System_p.multiply(System_p_).multiply(C1).add(System_q.multiply(System_q_).multiply(C1));
+        BigInteger C2_tag_tmp = System_p.multiply(System_p_).multiply(C1_tag).add(System_q.multiply(System_q_).multiply(C1_tag));
+        BigInteger C_ser = (C2_tmp.multiply(r).add(GenPrime(pp).multiply(System_N))).mod(System_T);
+        BigInteger C_ser_tag = (C2_tag_tmp.multiply(r_tag).add(GenPrime(pp).multiply(System_N))).mod(System_T);
 
-        List<Map> result = new ArrayList<>();
-        Map<String, BigInteger[]> CMap = new HashMap<>();
-        Map<String, BigInteger> rMap = new HashMap<>();
-        rMap.put("r",r);
-        rMap.put("r_tag",r_tag);
-        CMap.put("C_ser",C_ser);
-        CMap.put("C_ser_tag",C_ser_tag);
-        result.add(rMap);
-        result.add(CMap);
+        Map<String, BigInteger> map = new HashMap<>();
+        map.put("r",r);
+        map.put("r_tag",r_tag);
+        map.put("C_ser",C_ser);
+        map.put("C_ser_tag",C_ser_tag);
 
-        return result;//<r,r_tag>,<C_ser,C_ser_tag>
+        return map;//<r,r_tag,C_ser,C_ser_tag>
     }
 
     public static BigInteger Cmp(BigInteger Cx, BigInteger Cy, BigInteger r, BigInteger N, BigInteger p1, BigInteger q1, BigInteger N1, BigInteger T1, BigInteger p0, int degF){
@@ -190,42 +175,13 @@ public class THMDEM {
         int[] m = new int[2];
         m[0] = 2;
         m[1] = 2;
-        String pk_ser = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAE8ILDmnio0DPTwYGyr3kf/oMl6NLrzEbB2d0PQ+GBTvWRzV7SoaIsOUVVYt8xBQJRZa9lCzJ4aSKDdhgIznENSQ==";
-        String pk_csp = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEGkDaiK+vVaXz1SIvTxY5ekbmd1Y36ttkva3FztUEVNy6YVvMGnp//TohyLK4rt3XSghyLu9sB+PwtCDgx9o+ow";
-        String sk_ser = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg6jKAhWFFGJwOO9/312//uj2CtrTu561z0n8279IxbJKgCgYIKoEcz1UBgi2hRANCAATwgsOaeKjQM9PBgbKveR/+gyXo0uvMRsHZ3Q9D4YFO9ZHNXtKhoiw5RVVi3zEFAlFlr2ULMnhpIoN2GAjOcQ1J";
-        String sk_csp = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgWPxKfkITz3skP9dJbuFK856mQgoHZjPThHzxlqvCnjSgCgYIKoEcz1UBgi2hRANCAAQaQNqIr69VpfPVIi9PFjl6RuZ3Vjfq22S9rcXO1QRU3LphW8waen/9OiHIsriu3ddKCHIu72wH4/C0IODH2j6j";
         String pk_user = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEljt5cNZDyOmhu5pzaQdzqsMQF3QMP/+njlKCPiLC06+Vs3Xa0hqvZqFr3cz7CDjj4omecF8k12ShGErzR5lVlw==";
         String sk_user = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgbaDyPzgbtMO6PlRBYFXke0dS3fI8q4gn8uPZvJaulOSgCgYIKoEcz1UBgi2hRANCAASWO3lw1kPI6aG7mnNpB3OqwxAXdAw//6eOUoI+IsLTr5WzddrSGq9moWvdzPsIOOPiiZ5wXyTXZKEYSvNHmVWX";
 
-        BigInteger[] C = new BigInteger[2];
-        BigInteger[] C_tag = new BigInteger[2];
-        BigInteger[][] userKey = UserKeyGen(1);
-        BigInteger p_ = userKey[0][0].modInverse(userKey[0][1]),q_=userKey[0][1].modInverse(userKey[0][0]);
-        BigInteger r = GenPrime(pp);
-        BigInteger k1 = GenPrime(pp);
-        BigInteger k2 = GenPrime(pp);
-        BigInteger msp = BigInteger.valueOf(m[0]).add(k1.multiply(userKey[0][5]));
-        BigInteger tmp1 = userKey[0][0].multiply(p_).multiply(msp);
-        BigInteger tmp2 = userKey[0][1].multiply(q_).multiply(msp);
-        BigInteger tmp3 = tmp1.add(tmp2).mod(userKey[0][4]);
-        C[0] = tmp3.multiply(r).add(k2.multiply(userKey[0][3])).mod(userKey[0][4]);
 
 
-        System.out.println(C[0]);
-        BigInteger r_ = r.modInverse(userKey[0][3]);
-        BigInteger C1 = C[0].multiply(r_).mod(userKey[0][3]).mod(userKey[0][5]);
 
 
-        System.out.println(C1);
-        BigInteger C2_tmp = System_p.multiply(System_p_).multiply(C1).add(System_q.multiply(System_q_).multiply(C1));
-        BigInteger r_ser = GenPrime(pp);
-        BigInteger r_ser_ = r_ser.modInverse(System_N);
-        BigInteger C2 = C2_tmp.multiply(r_ser).add(GenPrime(pp).multiply(System_N)).mod(System_T);
-        System.out.println(C2);
-        C2 = C2.mod(System_N);
-        System.out.println(C2);
-        C2 = C2.multiply(r_ser_).mod(System_N);
-        System.out.println(C2);
 
 
     }

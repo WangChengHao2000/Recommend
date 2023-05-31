@@ -31,6 +31,8 @@ public class User {
 
     private String privatekey;
 
+    private String p0;
+
     public User() {
     }
 
@@ -46,7 +48,7 @@ public class User {
     }
 
     public User(String username, String password, int age,
-                String gender, String occupation, String publickey, String privatekey) {
+                String gender, String occupation, String publickey, String privatekey,String p0) {
         this.username = username;
         this.password = password;
         this.age = age;
@@ -54,6 +56,7 @@ public class User {
         this.occupation = occupation;
         this.publickey = publickey;
         this.privatekey = publickey;
+        this.p0 = p0;
 
     }
 }

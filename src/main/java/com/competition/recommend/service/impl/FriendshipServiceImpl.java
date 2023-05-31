@@ -43,6 +43,12 @@ public class FriendshipServiceImpl implements FriendshipService {
     }
 
     @Override
+    public void deleteFriend(String friendName) {
+        friendshipRepository.deleteFriendshipsByFriendName(friendName);
+    }
+
+
+    @Override
     public List<User> getAllFriends(Long userId) {
         List<Friendship> friendshipList = friendshipRepository.findAllByUserId(userId);
         List<User> userList = new ArrayList<>();

@@ -11,6 +11,8 @@ public interface FriendshipService {
 
     void deleteFriend(Long userId, String friendName);
 
+    void deleteFriend(String friendName);
+
     List<User> getAllFriends(Long userId);
 
     Page<User> getAllFriends(Long userId, int page, int size);

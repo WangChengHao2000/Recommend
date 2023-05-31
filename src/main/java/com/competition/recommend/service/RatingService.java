@@ -15,7 +15,7 @@ public interface RatingService {
 
     Page<Rating> getAllByMovieId(Long movieId, int page, int size);
 
-    void addRating(Long userId, Long movieId, String title ,String rating);
+    void addRating(Long userId, Long movieId, String title ,String rating, String C, String C_tag, String C_ser, String C_ser_tag, String C_csp);
 
     void deleteRating(Long userId, Long movieId);
 }

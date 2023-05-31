@@ -4,8 +4,10 @@ import com.competition.recommend.entity.Rating;
 import com.competition.recommend.entity.RecommendResponse;
 import com.competition.recommend.entity.RecommendStatus;
 import com.competition.recommend.entity.User;
+import com.competition.recommend.service.FriendshipService;
 import com.competition.recommend.service.UserService;
 import com.competition.recommend.util.MySM2;
+import com.competition.recommend.util.THMDEM;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FriendshipService friendshipService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public RecommendResponse<Map<String, String>> login(@RequestBody User user) {
@@ -52,13 +57,16 @@ public class UserController {
         PrivateKey privateKey = sm2Key.getPrivate();
         //获取私钥base加密后字符串
         String privateStr = Base64.encodeBase64String(privateKey.getEncoded());
+
+        String p0 = String.valueOf(THMDEM.GenPrime(31));
         User createUser = new User(request.getParameter("createUsername"),
                 request.getParameter("createPassword"),
                 Integer.parseInt(request.getParameter("createAge")),
                 request.getParameter("createGender"),
                 request.getParameter("createOccupation"),
                 publicStr,
-                privateStr
+                privateStr,
+                p0
                 );
 
         User existUser = userService.getUserByUsername(createUser.getUsername());
@@ -77,12 +85,13 @@ public class UserController {
                 request.getParameter("updatePassword"),
                 Integer.parseInt(request.getParameter("updateAge")),
                 request.getParameter("updateGender"),
-                request.getParameter("updateOccupation"),null,null);
+                request.getParameter("updateOccupation"),null,null,null);
 
         User existUser = userService.getUserByUsername(updateUser.getUsername());
         if (existUser != null) {
             updateUser.setPublickey(existUser.getPublickey());
             updateUser.setPrivatekey(existUser.getPrivatekey());
+            updateUser.setP0(existUser.getP0());
             updateUser.setId(existUser.getId());
             return new RecommendResponse<>(RecommendStatus.SUCCESS, userService.updateUser(updateUser));
         }
@@ -95,7 +104,8 @@ public class UserController {
         RecommendResponse<Object> response = isAdmin(request);
         if (response != null)
             return response;
-
+        User delUser = userService.getUserByUserId(Long.valueOf(request.getParameter("deleteId")));
+        friendshipService.deleteFriend(delUser.getUsername());
         userService.deleteUser(Long.valueOf(request.getParameter("deleteId")));
         return new RecommendResponse<>(RecommendStatus.SUCCESS, "删除成功");
     }
