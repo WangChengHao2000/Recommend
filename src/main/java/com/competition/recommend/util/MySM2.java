@@ -111,7 +111,7 @@ public class MySM2 {
         String pk_user = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEljt5cNZDyOmhu5pzaQdzqsMQF3QMP/+njlKCPiLC06+Vs3Xa0hqvZqFr3cz7CDjj4omecF8k12ShGErzR5lVlw==";
         String sk_user = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgbaDyPzgbtMO6PlRBYFXke0dS3fI8q4gn8uPZvJaulOSgCgYIKoEcz1UBgi2hRANCAASWO3lw1kPI6aG7mnNpB3OqwxAXdAw//6eOUoI+IsLTr5WzddrSGq9moWvdzPsIOOPiiZ5wXyTXZKEYSvNHmVWX";
 
-        String dec = decryptSm2(sk_ser,"BCBQXOdbCiRCpuRG0DCKQuvnMN4KVnZprduJKcnQhOV89e/6ayq07Y7JTQkwTmhauRY0JQPYroJGcqTS+OE1Yk7c2iIBl1L2TBuqTgBeTbSSFBMRX21I2zGz/gSrcPMpocKqafmVNW3hZ6k=");
+        String dec = decryptSm2("MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg6jKAhWFFGJwOO9/312//uj2CtrTu561z0n8279IxbJKgCgYIKoEcz1UBgi2hRANCAATwgsOaeKjQM9PBgbKveR/+gyXo0uvMRsHZ3Q9D4YFO9ZHNXtKhoiw5RVVi3zEFAlFlr2ULMnhpIoN2GAjOcQ1J","BA2rBOLVrFE71xrs4K/Un7DEYSr5PB8RgOG7HgkH70RI8op2xKPPAABu/mVjBgVFGZHSPYASu6lzOA7Uwv4oXL6xqwQOG0Nl6i6w8BYWl2jM5+8R/4nyzWkmZowNbheByp0n9OtkOUUlfBE=");
         System.out.println(dec);
 
     }

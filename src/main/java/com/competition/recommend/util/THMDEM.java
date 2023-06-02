@@ -8,9 +8,11 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.util.*;
 
 import static com.competition.recommend.util.MySM2.createSm2Key;
+import static com.competition.recommend.util.MySM2.decryptSm2;
 
 public class THMDEM {
     private static final int pp = 32;
@@ -18,10 +20,10 @@ public class THMDEM {
     private static final BigInteger System_q = new BigInteger("4114078093");
     private static final BigInteger System_p_ = System_p.modInverse(System_q);
     private static final BigInteger System_q_ = System_q.modInverse(System_p);
-    private static final BigInteger System_r = new BigInteger("3513461933");
+    public static final BigInteger System_r = new BigInteger("3513461933");
     private static final BigInteger System_r_tag = new BigInteger("3462849659");
-    private static final BigInteger System_N= new BigInteger("10478137608373995719");
-    private static final BigInteger System_T= new BigInteger("35487842878623242247112463137");
+    public static final BigInteger System_N= new BigInteger("10478137608373995719");
+    public static final BigInteger System_T= new BigInteger("35487842878623242247112463137");
     private static final BigInteger System_p_double= new BigInteger("10573295537407891733");
     private static final BigInteger System_q_double= new BigInteger("13116557318305684223");
     private static final BigInteger System_N_double= new BigInteger("138685236959796314692334750912470228459");
@@ -73,7 +75,7 @@ public class THMDEM {
 
     public static Map<String,String> Encrypt(int m, BigInteger p, BigInteger q, BigInteger N, BigInteger T,
                                              BigInteger p_0,BigInteger r,BigInteger r_tag, String pk_ser, String pk_csp) {
-
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         int s = m == 0 ? 1 : 0;
 
         BigInteger p_ = p.modInverse(q),q_=q.modInverse(p);
@@ -100,9 +102,10 @@ public class THMDEM {
     }
 
     public static Map<String,BigInteger> KeySwitch(Map<String,String> C_sen, BigInteger p_0_i, String sk_ser, String sk_csp){
-        String S_r_i = MySM2.decryptSm2(sk_ser, (String) C_sen.get("C_ser"));
-        String S_r_i_tag = MySM2.decryptSm2(sk_ser, (String) C_sen.get("C_ser_tag"));
-        String S_N_i = MySM2.decryptSm2(sk_csp, (String) C_sen.get("C_csp"));
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        String S_r_i = decryptSm2(sk_ser, (String) C_sen.get("C_ser"));
+        String S_r_i_tag = decryptSm2(sk_ser, (String) C_sen.get("C_ser_tag"));
+        String S_N_i = decryptSm2(sk_csp, (String) C_sen.get("C_csp"));
         BigInteger r_i = new BigInteger(S_r_i);
         BigInteger r_i_tag = new BigInteger(S_r_i_tag);
         BigInteger N_i = new BigInteger(S_N_i);
@@ -161,10 +164,12 @@ public class THMDEM {
     }
 
     public static BigInteger Decrypt(String CF, String Cr, String sk_rec,int degF){
-        String S_r = MySM2.decryptSm2(sk_rec, Cr);
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        System.out.println(decryptSm2(sk_rec, Cr));
+        String S_r = decryptSm2(sk_rec, Cr);
         BigInteger r = new BigInteger(S_r);
         BigInteger r_ = r.modInverse(System_T);
-        String S_F = MySM2.decryptSm2(sk_rec, CF);
+        String S_F = decryptSm2(sk_rec, CF);
         BigInteger F = new BigInteger(S_F);
         r_ = r_.pow(degF);
 
@@ -173,10 +178,15 @@ public class THMDEM {
 
     public static void main(String[] args) {
         int[] m = new int[2];
-        m[0] = 10;
+        m[0] = 3;
         m[1] = 1;
         String pk_user = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEljt5cNZDyOmhu5pzaQdzqsMQF3QMP/+njlKCPiLC06+Vs3Xa0hqvZqFr3cz7CDjj4omecF8k12ShGErzR5lVlw==";
         String sk_user = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgbaDyPzgbtMO6PlRBYFXke0dS3fI8q4gn8uPZvJaulOSgCgYIKoEcz1UBgi2hRANCAASWO3lw1kPI6aG7mnNpB3OqwxAXdAw//6eOUoI+IsLTr5WzddrSGq9moWvdzPsIOOPiiZ5wXyTXZKEYSvNHmVWX";
+        String CCC = "BA2rBOLVrFE71xrs4K/Un7DEYSr5PB8RgOG7HgkH70RI8op2xKPPAABu/mVjBgVFGZHSPYASu6lzOA7Uwv4oXL6xqwQOG0Nl6i6w8BYWl2jM5+8R/4nyzWkmZowNbheByp0n9OtkOUUlfBE=";
+        String sk = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgP2v+SMG8Y84yoTfv+vmfBC5U5X+LhV1PIf3Zrtvt2gigCgYIKoEcz1UBgi2hRANCAATGwUCmQ2Pw+WNydS5WtQnZ0jqDpJAxbuoE8iKJfVC9qWrKnDtndr9eKXv/QyaOGDLGcn1smvW3n/sjF0pfxPUm";
+
+        String dec = decryptSm2("MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg6jKAhWFFGJwOO9/312//uj2CtrTu561z0n8279IxbJKgCgYIKoEcz1UBgi2hRANCAATwgsOaeKjQM9PBgbKveR/+gyXo0uvMRsHZ3Q9D4YFO9ZHNXtKhoiw5RVVi3zEFAlFlr2ULMnhpIoN2GAjOcQ1J","BA2rBOLVrFE71xrs4K/Un7DEYSr5PB8RgOG7HgkH70RI8op2xKPPAABu/mVjBgVFGZHSPYASu6lzOA7Uwv4oXL6xqwQOG0Nl6i6w8BYWl2jM5+8R/4nyzWkmZowNbheByp0n9OtkOUUlfBE=");
+        System.out.println(dec);
         BigInteger[] key = UserKeyGen();
 
 
