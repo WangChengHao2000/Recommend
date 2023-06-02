@@ -31,7 +31,7 @@ public class THMDEM {
     public static final String pk_csp = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEGkDaiK+vVaXz1SIvTxY5ekbmd1Y36ttkva3FztUEVNy6YVvMGnp//TohyLK4rt3XSghyLu9sB+PwtCDgx9o+ow";
     public static final String sk_ser = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg6jKAhWFFGJwOO9/312//uj2CtrTu561z0n8279IxbJKgCgYIKoEcz1UBgi2hRANCAATwgsOaeKjQM9PBgbKveR/+gyXo0uvMRsHZ3Q9D4YFO9ZHNXtKhoiw5RVVi3zEFAlFlr2ULMnhpIoN2GAjOcQ1J";
     public static final String sk_csp = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgWPxKfkITz3skP9dJbuFK856mQgoHZjPThHzxlqvCnjSgCgYIKoEcz1UBgi2hRANCAAQaQNqIr69VpfPVIi9PFjl6RuZ3Vjfq22S9rcXO1QRU3LphW8waen/9OiHIsriu3ddKCHIu72wH4/C0IODH2j6j";
-
+    public static final BigInteger System_tag1 = new BigInteger("32702801892187680541365505816");
 
 
     public static BigInteger GenPrime(int length){
@@ -136,6 +136,7 @@ public class THMDEM {
         BigInteger r1 = new BigInteger("2");
         BigInteger r2 = n.subtract(new BigInteger("1"));
         BigInteger r_1 = System_r_tag.modInverse(System_N);
+        r_1 = r_1.pow(degF);
         BigInteger p1_ = System_p_double.modInverse(System_q_double);
         BigInteger q1_ = System_q_double.modInverse(System_p_double);
         BigInteger Cx1 = Cx.multiply(r_1).mod(System_N);
@@ -162,18 +163,17 @@ public class THMDEM {
     public static BigInteger Decrypt(String CF, String Cr, String sk_rec,int degF){
         String S_r = MySM2.decryptSm2(sk_rec, Cr);
         BigInteger r = new BigInteger(S_r);
-        System.out.println(r);
-        BigInteger r_ = r.modInverse(System_N);
+        BigInteger r_ = r.modInverse(System_T);
         String S_F = MySM2.decryptSm2(sk_rec, CF);
         BigInteger F = new BigInteger(S_F);
-        System.out.println(F);
+        r_ = r_.pow(degF);
 
-        return F.multiply(r_).mod(System_N);
+        return F.multiply(r_).mod(System_T);
     }
 
     public static void main(String[] args) {
         int[] m = new int[2];
-        m[0] = 3;
+        m[0] = 10;
         m[1] = 1;
         String pk_user = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEljt5cNZDyOmhu5pzaQdzqsMQF3QMP/+njlKCPiLC06+Vs3Xa0hqvZqFr3cz7CDjj4omecF8k12ShGErzR5lVlw==";
         String sk_user = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgbaDyPzgbtMO6PlRBYFXke0dS3fI8q4gn8uPZvJaulOSgCgYIKoEcz1UBgi2hRANCAASWO3lw1kPI6aG7mnNpB3OqwxAXdAw//6eOUoI+IsLTr5WzddrSGq9moWvdzPsIOOPiiZ5wXyTXZKEYSvNHmVWX";
@@ -187,14 +187,12 @@ public class THMDEM {
         BigInteger C_ser_tag0 = mp1.get("C_ser_tag");
         BigInteger C_ser = mp1.get("C_ser");
         BigInteger C_ser_tag1 = mp3.get("C_ser_tag");
-        BigInteger x = Cmp(C_ser_tag0,C_ser_tag1,1);
+        System.out.println(C_ser_tag1);
+        BigInteger x = Cmp(C_ser_tag0,System_tag1,1);
         C_ser = C_ser.mod(System_N);
-        BigInteger r_ = System_r.modInverse(System_N);
-        System.out.println(C_ser.multiply(r_).mod(System_N));
         String CF = MySM2.encryptSm2(pk_user,x.multiply(C_ser).toString());
         System.out.println(x.multiply(C_ser));
         String Cr = MySM2.encryptSm2(pk_user, System_r.toString());
-        System.out.println(System_r);
         BigInteger res = Decrypt(CF,Cr,sk_user,1);
         System.out.println(res);
 

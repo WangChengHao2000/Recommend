@@ -71,6 +71,7 @@ public class MovieServiceImpl implements MovieService {
         List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
         int friendNumber = friendships.size();
         BigInteger[][] M_friend_avg = new BigInteger[friendNumber][2];
+        //获取每个friend的平均评分 avg = avg[0]/avg[1].
         for(int i =0;i<friendNumber;i++){
             String friendName = friendships.get(i).getFriendName();
             User friend = userRepository.findByUsername(friendName).orElse(null);
@@ -78,35 +79,61 @@ public class MovieServiceImpl implements MovieService {
             List<Rating> ratings = ratingRepository.findAllByUserId(friend.getId());
             M_friend_avg[i][1] = BigInteger.valueOf(ratings.size());
             M_friend_avg[i][0] = BigInteger.valueOf(0);
-            for(int j = 0;j<ratings.size();j++){
-                Map<String,String> mp =new HashMap<>();
-                mp.put("C",ratings.get(j).getC());
-                mp.put("C_tag",ratings.get(j).getC_tag());
-                mp.put("C_ser",ratings.get(j).getC_ser());
-                mp.put("C_ser_tag",ratings.get(j).getC_ser_tag());
-                mp.put("C_csp",ratings.get(j).getC_csp());
-                Map<String,BigInteger> result = THMDEM.KeySwitch(mp,new BigInteger(friend.getP0()),THMDEM.sk_ser,THMDEM.sk_csp);
-                M_friend_avg[i][0] = M_friend_avg[i][0].add(result.get("C_ser"));
+            for (Rating rating : ratings) {
+                Map<String, String> mp = new HashMap<>();
+                mp.put("C", rating.getC());
+                mp.put("C_tag", rating.getC_tag());
+                mp.put("C_ser", rating.getC_ser());
+                mp.put("C_ser_tag", rating.getC_ser_tag());
+                mp.put("C_csp", rating.getC_csp());
+                Map<String, BigInteger> result = THMDEM.KeySwitch(mp, new BigInteger(friend.getP0()), THMDEM.sk_ser, THMDEM.sk_csp);
+                BigInteger C_ser = result.get("C_ser");
+                BigInteger cmpResult = THMDEM.Cmp(C_ser, THMDEM.System_tag1, 1);
+                M_friend_avg[i][0] = M_friend_avg[i][0].add(cmpResult.multiply(C_ser));
             }
         }
 
+        //获取每个stranger的平均评分  avg = avg[0]/avg[1].
         int strangerNumber = strangerId.length;
         BigInteger[][] M_stranger_avg = new BigInteger[strangerNumber][2];
         for(int i =0;i<strangerNumber;i++){
+            User stranger = userRepository.findById(strangerId[i]).orElse(null);
+            if(stranger==null) continue;
             List<Rating> ratings = ratingRepository.findAllByUserId(strangerId[i]);
             M_stranger_avg[i][1] = BigInteger.valueOf(ratings.size());
             M_stranger_avg[i][0] = BigInteger.valueOf(0);
-            for(int j = 0;j<ratings.size();j++){
-                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(new BigInteger(ratings.get(j).getRating()));
+            for (Rating rating : ratings) {
+                Map<String, String> mp = new HashMap<>();
+                mp.put("C", rating.getC());
+                mp.put("C_tag", rating.getC_tag());
+                mp.put("C_ser", rating.getC_ser());
+                mp.put("C_ser_tag", rating.getC_ser_tag());
+                mp.put("C_csp", rating.getC_csp());
+                Map<String, BigInteger> result = THMDEM.KeySwitch(mp, new BigInteger(stranger.getP0()), THMDEM.sk_ser, THMDEM.sk_csp);
+                BigInteger C_ser = result.get("C_ser");
+                BigInteger cmpResult = THMDEM.Cmp(C_ser, THMDEM.System_tag1, 1);
+                M_friend_avg[i][0] = M_friend_avg[i][0].add(cmpResult.multiply(C_ser));
+                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(new BigInteger(rating.getRating()));
             }
         }
 
+        //获取目标用户的平均评分
         List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
+        User user = userRepository.findById(userId).orElse(null);
+        assert user != null;
         BigInteger[] M_user_avg = new BigInteger[2];
         M_user_avg[1] = BigInteger.valueOf(userRatings.size());
-        for (int i = 0; i < userRatings.size(); i++) {
-            M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRatings.get(i).getRating()));
+        for (Rating userRating : userRatings) {
+            Map<String,String> mp = new HashMap<>();
+            mp.put("C",userRating.getC());
+            mp.put("C_tag",userRating.getC_tag());
+            mp.put("C_ser",userRating.getC_ser());
+            mp.put("C_ser_tag",userRating.getC_ser_tag());
+            mp.put("C_csp",userRating.getC_csp());
+            Map<String,BigInteger> result = THMDEM.KeySwitch(mp, new BigInteger(user.getP0()),THMDEM.sk_ser,THMDEM.sk_csp);
+            M_user_avg[0] = M_user_avg[0].add(new BigInteger(userRating.getRating()));
         }
+
 
         return null;
     }
