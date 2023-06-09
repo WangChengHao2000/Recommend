@@ -43,6 +43,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElse(null);
         users.remove(user);
 
+        users.forEach(user1 -> {
+            if (user1.getType() == null || !user1.getType().equals("admin"))
+                user1.setType("user");
+        });
+
         return users;
     }
 

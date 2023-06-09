@@ -19,4 +19,8 @@ public class Movie {
 
     private String date;
 
+    private double avg;
+
+    private int count;
+
 }

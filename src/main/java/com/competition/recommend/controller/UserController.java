@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,9 +46,10 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RecommendResponse<Object> createUser(HttpServletRequest request) {
-        RecommendResponse<Object> response = isAdmin(request);
-        if (response != null)
-            return response;
+//        RecommendResponse<Object> response = isAdmin(request);
+//        if (response != null)
+//            return response;
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         KeyPair sm2Key = MySM2.createSm2Key();
         //获取公钥
         PublicKey publicKey = sm2Key.getPublic();

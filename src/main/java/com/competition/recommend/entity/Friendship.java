@@ -19,4 +19,6 @@ public class Friendship {
 
     private String friendName;
 
+    private int relation;
+
 }

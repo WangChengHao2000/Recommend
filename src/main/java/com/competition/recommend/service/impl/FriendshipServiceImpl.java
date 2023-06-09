@@ -1,18 +1,17 @@
 package com.competition.recommend.service.impl;
 
 import com.competition.recommend.entity.Friendship;
+import com.competition.recommend.entity.Rating;
 import com.competition.recommend.entity.User;
 import com.competition.recommend.repository.FriendshipRepository;
+import com.competition.recommend.repository.RatingRepository;
 import com.competition.recommend.repository.UserRepository;
 import com.competition.recommend.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,12 +24,43 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RatingRepository ratingRepository;
+
     @Override
     public void addFriend(Long userId, String friendName) {
         if (!isFriend(userId, friendName)) {
             Friendship friendship = new Friendship();
             friendship.setUserId(userId);
             friendship.setFriendName(friendName);
+
+            User friend = userRepository.findByUsername(friendName).orElse(null);
+
+            assert friend != null;
+
+            Long friendId = friend.getId();
+
+            List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
+            List<Rating> friendRatings = ratingRepository.findAllByUserId(friendId);
+
+            Set<Long> userRatingId = new HashSet<>();
+            for (Rating rating : userRatings) {
+                userRatingId.add(rating.getMovieId());
+            }
+            Set<Long> friendRatingId = new HashSet<>();
+            for (Rating rating : friendRatings) {
+                friendRatingId.add(rating.getMovieId());
+            }
+
+            int totalUserCount = userRatingId.size();
+            int totalFriendCount = friendRatingId.size();
+            userRatingId.retainAll(friendRatingId);
+            int sameCount = userRatingId.size();
+
+            int relation = sameCount * 100 / (totalUserCount + totalFriendCount - sameCount);
+
+            friendship.setRelation(relation);
+
             friendshipRepository.save(friendship);
         }
     }
@@ -57,6 +87,12 @@ public class FriendshipServiceImpl implements FriendshipService {
             if (user != null)
                 userList.add(user);
         }
+
+        userList.forEach(user -> {
+            if (user.getType() == null || !user.getType().equals("admin"))
+                user.setType("user");
+        });
+
         return userList;
     }
 
@@ -82,8 +118,6 @@ public class FriendshipServiceImpl implements FriendshipService {
         userList.remove(user);
         return userList;
     }
-
-
 
 
     private boolean isFriend(Long userId, String friendName) {
