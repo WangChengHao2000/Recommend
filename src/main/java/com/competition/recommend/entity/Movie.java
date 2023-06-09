@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class Movie {
+public class Movie implements Comparable<Movie>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,10 @@ public class Movie {
 
     private int count;
 
+    private Integer rating;
+
+    @Override
+    public int compareTo(Movie o) {
+        return o.getRating()-this.getRating();
+    }
 }
