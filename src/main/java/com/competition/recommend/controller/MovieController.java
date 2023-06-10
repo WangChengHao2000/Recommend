@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @CrossOrigin
@@ -60,11 +62,23 @@ public class MovieController {
 
     @RequestMapping(value = "/getRecommend", method = RequestMethod.GET)
     public RecommendResponse<Object> getRecommend(Long userId) {
-        List<User> strangers = friendshipService.getAllStranger(userId);
-        Long[] strangerId = new Long[2];
-        for (int i = 0; i < strangers.size()&&i < 2; i++) {
-            strangerId[i] = strangers.get(i).getId();
 
+        List<User> strangers = friendshipService.getAllStranger(userId);
+
+        List<Integer> list = new ArrayList<>();
+        Random ra = new Random();
+        int j=0;
+        while (j<5) {
+            int r = ra.nextInt(strangers.size());
+            //利用collection集合下的contains方法来判断集合中是否存在生成的随机数
+            if (!list.contains(r)) {
+                list.add(r);
+                j++;
+            }
+        }
+        Long[] strangerId = new Long[5];
+        for (int i = 0; i < 5; i++) {
+            strangerId[i] = strangers.get(list.get(i)).getId();
         }
         List<Movie> movies = movieService.getRecommendMovies(userId,strangerId);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);

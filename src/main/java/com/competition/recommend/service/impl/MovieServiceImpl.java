@@ -74,7 +74,7 @@ public class MovieServiceImpl implements MovieService {
             User friend = userRepository.findByUsername(friendships.get(i).getFriendName()).orElse(null);
             if(friend==null) continue;
             List<Rating> ratings = ratingRepository.findAllByUserId(friend.getId());
-            M_friend_avg[i][1] = BigInteger.valueOf(ratings.size());
+            M_friend_avg[i][1] = BigInteger.valueOf(0);
             M_friend_avg[i][0] = BigInteger.valueOf(0);
             for (Rating rating : ratings) {
                 if (!movieIds.contains(rating.getMovieId()))
@@ -89,8 +89,12 @@ public class MovieServiceImpl implements MovieService {
                 BigInteger C_ser = result.get("C_ser");
                 BigInteger C_ser_tag = result.get("C_ser_tag");
                 BigInteger cmpResult = THMDEM.Cmp(C_ser_tag, THMDEM.System_tag1, 1);
-                M_friend_avg[i][0] = M_friend_avg[i][0].add(cmpResult.multiply(C_ser));
+                BigInteger res = cmpResult.multiply(C_ser).multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N);
+                if (res.compareTo(BigInteger.valueOf(5)) > 0) continue;
+                M_friend_avg[i][1] = M_friend_avg[i][1].add(BigInteger.valueOf(1));
+                M_friend_avg[i][0] = M_friend_avg[i][0].add(cmpResult.multiply(C_ser)).mod(THMDEM.System_T);
             }
+            System.out.println(M_friend_avg[i][0].multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N));
         }
 
         //获取每个stranger的平均评分  avg = avg[0]/avg[1].
@@ -100,7 +104,7 @@ public class MovieServiceImpl implements MovieService {
             User stranger = userRepository.findById(strangerId[i]).orElse(null);
             if(stranger==null) continue;
             List<Rating> ratings = ratingRepository.findAllByUserId(strangerId[i]);
-            M_stranger_avg[i][1] = BigInteger.valueOf(ratings.size());
+            M_stranger_avg[i][1] = BigInteger.valueOf(0);
             M_stranger_avg[i][0] = BigInteger.valueOf(0);
             for (Rating rating : ratings) {
                 if (!movieIds.contains(rating.getMovieId()))
@@ -115,7 +119,10 @@ public class MovieServiceImpl implements MovieService {
                 BigInteger C_ser = result.get("C_ser");
                 BigInteger C_ser_tag = result.get("C_ser_tag");
                 BigInteger cmpResult = THMDEM.Cmp(C_ser_tag, THMDEM.System_tag1, 1);
-                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(cmpResult.multiply(C_ser));
+                BigInteger res = cmpResult.multiply(C_ser).multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N);
+                if (res.compareTo(BigInteger.valueOf(5)) > 0) continue;
+                M_stranger_avg[i][0] = M_stranger_avg[i][0].add(cmpResult.multiply(C_ser).mod(THMDEM.System_T));
+                M_stranger_avg[i][1] = M_stranger_avg[i][1].add(BigInteger.valueOf(1));
             }
         }
         //获取目标用户的已评分movieId
@@ -157,7 +164,7 @@ public class MovieServiceImpl implements MovieService {
                 User friend = userRepository.findByUsername(friendships.get(j).getFriendName()).orElse(null);
                 assert friend != null;
                 Rating rating_friend = ratingRepository.findByUserIdAndAndMovieId(friend.getId(), movieId).orElse(null);
-                if (rating_friend==null) continue; //判断电影movie[i]是否被friend评过分。
+                if (rating_friend==null) continue; //判断电影movie[i]是否被该friend评过分。
                 Map<String,String> mp_friend = new HashMap<>();
                 mp_friend.put("C",rating_friend.getC().replace("\t",""));
                 mp_friend.put("C_tag",rating_friend.getC_tag().replace("\t",""));
@@ -169,8 +176,10 @@ public class MovieServiceImpl implements MovieService {
                 BigInteger C_ser_tag = result.get("C_ser_tag");
                 BigInteger cmpResult = THMDEM.Cmp(C_ser_tag, THMDEM.System_tag1, 1);
                 BigInteger tmp = cmpResult.multiply(C_ser);
+                BigInteger res = tmp.multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N);
+                if (res.compareTo(BigInteger.valueOf(5)) > 0) continue;
                 tmp = tmp.multiply(M_friend_avg[j][1]).subtract(M_friend_avg[j][0]);
-                M_friend[i][0] = M_friend[i][0].multiply(M_friend_avg[j][1]).add(M_friend[i][1].multiply(tmp));
+                M_friend[i][0] = M_friend[i][0].multiply(M_friend_avg[j][1]).add(M_friend[i][1].multiply(tmp)).mod(THMDEM.System_T);
                 M_friend[i][1] = M_friend[i][1].multiply(M_friend_avg[j][1]);
                 N_friend[i]++;
             }
@@ -194,11 +203,15 @@ public class MovieServiceImpl implements MovieService {
                 BigInteger C_ser_tag = result.get("C_ser_tag");
                 BigInteger cmpResult = THMDEM.Cmp(C_ser_tag, THMDEM.System_tag1, 1);
                 BigInteger tmp = cmpResult.multiply(C_ser);
+                BigInteger res = tmp.multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N);
+                if (res.compareTo(BigInteger.valueOf(5)) > 0) continue;
                 tmp = tmp.multiply(M_stranger_avg[j][1]).subtract(M_stranger_avg[j][0]);
                 M_stranger[i][0] = M_stranger[i][0].multiply(M_stranger_avg[j][1]).add(M_stranger[i][1].multiply(tmp));
                 M_stranger[i][1] = M_stranger[i][1].multiply(M_stranger_avg[j][1]);
                 N_stranger[i]++;
             }
+            if (N_friend[i]==0) N_friend[i] = 1;
+            if (N_stranger[i]==0) N_stranger[i] = 1;
             M_friend[i][1] = M_friend[i][1].multiply(BigInteger.valueOf(N_friend[i]));
             M_stranger[i][1] = M_stranger[i][1].multiply(BigInteger.valueOf(N_stranger[i]));
         }
@@ -207,8 +220,6 @@ public class MovieServiceImpl implements MovieService {
 
         List<Movie>  recoMovie = new ArrayList<>();
         for (int i = 0; i < movieNumber; i++) {
-            if (M_stranger[i][1].equals(BigInteger.valueOf(0))) M_stranger[i][1]=BigInteger.valueOf(1);
-            if (M_friend[i][1].equals(BigInteger.valueOf(0))) M_friend[i][1]=BigInteger.valueOf(1);
             Cy[i]= M_stranger[i][1].multiply(M_friend[i][1]).multiply(BigInteger.valueOf(11));
             Cx[i] = BigInteger.valueOf(10).multiply(M_friend[i][0].multiply(M_stranger[i][1])).add(BigInteger.valueOf(1).multiply(M_friend[i][1].multiply(M_stranger[i][0]))).mod(THMDEM.System_N);
             BigInteger r_ = THMDEM.System_r.modInverse(THMDEM.System_T);
@@ -216,15 +227,22 @@ public class MovieServiceImpl implements MovieService {
             BigInteger res = x.divide(Cy[i]);
             long a = x.longValue();
             long b = Cy[i].longValue();
-            double result = (double)a/ (double) b;
+            double result = (double)a*100/ (double) b;
             if(result>=1){
                 Movie nowMovie = movieRepository.findById(movieIds.get(i)).orElse(null);
                 assert nowMovie != null;
-                nowMovie.setRating((int)result*100);
+                nowMovie.setRating((int)result);
                 recoMovie.add(nowMovie);
             }
         }
         Collections.sort(recoMovie);
-        return recoMovie;
+        List<Movie> resMovie = new ArrayList<>();
+        if (recoMovie.size()>10){
+            for (int i = 0; i < 10; i++) {
+                resMovie.add(recoMovie.get(i));
+            }
+        }else return recoMovie;
+
+        return resMovie;
     }
 }
