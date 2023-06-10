@@ -130,23 +130,7 @@ public class MovieServiceImpl implements MovieService {
         for (Rating rating:userRatings){
             movieIds.remove(rating.getMovieId());
         }
-//        User user = userRepository.findById(userId).orElse(null);
-//        assert user != null;
-//        BigInteger[] M_user_avg = new BigInteger[2];
-//        M_user_avg[1] = BigInteger.valueOf(userRatings.size());
-//        for (Rating userRating : userRatings) {
-//            Map<String,String> mp = new HashMap<>();
-//            mp.put("C",userRating.getC().replace("\t",""));
-//            mp.put("C_tag",userRating.getC_tag().replace("\t",""));
-//            mp.put("C_ser",userRating.getC_ser());
-//            mp.put("C_ser_tag",userRating.getC_ser_tag());
-//            mp.put("C_csp",userRating.getC_csp());
-//            Map<String,BigInteger> result = THMDEM.KeySwitch(mp, new BigInteger(user.getP0().replace("\t","")),THMDEM.sk_ser,THMDEM.sk_csp);
-//            BigInteger C_ser = result.get("C_ser");
-//            BigInteger C_ser_tag = result.get("C_ser_tag");
-//            BigInteger cmpResult = THMDEM.Cmp(C_ser_tag, THMDEM.System_tag1, 1);
-//            M_user_avg[0] = M_user_avg[0].add(cmpResult.multiply(C_ser));
-//        }
+
         //计算friend和stranger的推荐评分
         int movieNumber = movieIds.size();
         BigInteger[][] M_friend = new BigInteger[movieNumber][2];
@@ -237,8 +221,8 @@ public class MovieServiceImpl implements MovieService {
         }
         Collections.sort(recoMovie);
         List<Movie> resMovie = new ArrayList<>();
-        if (recoMovie.size()>10){
-            for (int i = 0; i < 10; i++) {
+        if (recoMovie.size()>18){
+            for (int i = 0; i < 18; i++) {
                 resMovie.add(recoMovie.get(i));
             }
         }else return recoMovie;
