@@ -79,21 +79,22 @@ public class FriendshipServiceImpl implements FriendshipService {
 
 
     @Override
-    public List<User> getAllFriends(Long userId) {
+    public List<Friendship> getAllFriends(Long userId) {
         List<Friendship> friendshipList = friendshipRepository.findAllByUserId(userId);
-        List<User> userList = new ArrayList<>();
-        for (Friendship friendship : friendshipList) {
-            User user = userRepository.findByUsername(friendship.getFriendName()).orElse(null);
-            if (user != null)
-                userList.add(user);
-        }
+        return friendshipList;
+//        List<User> userList = new ArrayList<>();
+//        for (Friendship friendship : friendshipList) {
+//            User user = userRepository.findByUsername(friendship.getFriendName()).orElse(null);
+//            if (user != null)
+//                userList.add(user);
+//        }
+//
+//        userList.forEach(user -> {
+//            if (user.getType() == null || !user.getType().equals("admin"))
+//                user.setType("user");
+//        });
 
-        userList.forEach(user -> {
-            if (user.getType() == null || !user.getType().equals("admin"))
-                user.setType("user");
-        });
 
-        return userList;
     }
 
     @Override

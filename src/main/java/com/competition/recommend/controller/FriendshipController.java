@@ -1,9 +1,6 @@
 package com.competition.recommend.controller;
 
-import com.competition.recommend.entity.Movie;
-import com.competition.recommend.entity.RecommendResponse;
-import com.competition.recommend.entity.RecommendStatus;
-import com.competition.recommend.entity.User;
+import com.competition.recommend.entity.*;
 import com.competition.recommend.service.FriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +21,7 @@ public class FriendshipController {
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public RecommendResponse<Object> getAll(Long userId) {
-        List<User> friends = friendshipService.getAllFriends(userId);
+        List<Friendship> friends = friendshipService.getAllFriends(userId);
         return new RecommendResponse<>(RecommendStatus.SUCCESS, friends);
     }
 

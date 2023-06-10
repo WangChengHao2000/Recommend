@@ -1,5 +1,6 @@
 package com.competition.recommend.service;
 
+import com.competition.recommend.entity.Friendship;
 import com.competition.recommend.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -13,7 +14,7 @@ public interface FriendshipService {
 
     void deleteFriend(String friendName);
 
-    List<User> getAllFriends(Long userId);
+    List<Friendship> getAllFriends(Long userId);
 
     Page<User> getAllFriends(Long userId, int page, int size);
 

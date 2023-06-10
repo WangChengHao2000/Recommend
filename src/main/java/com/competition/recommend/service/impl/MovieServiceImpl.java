@@ -205,7 +205,8 @@ public class MovieServiceImpl implements MovieService {
         List<Movie>  recoMovie = new ArrayList<>();
         for (int i = 0; i < movieNumber; i++) {
             Cy[i]= M_stranger[i][1].multiply(M_friend[i][1]).multiply(BigInteger.valueOf(11));
-            Cx[i] = BigInteger.valueOf(10).multiply(M_friend[i][0].multiply(M_stranger[i][1])).add(BigInteger.valueOf(1).multiply(M_friend[i][1].multiply(M_stranger[i][0]))).mod(THMDEM.System_N);
+            Cx[i] = BigInteger.valueOf(10).multiply(M_friend[i][0].multiply(M_stranger[i][1]))
+                    .add(BigInteger.valueOf(1).multiply(M_friend[i][1].multiply(M_stranger[i][0]))).mod(THMDEM.System_N);
             BigInteger r_ = THMDEM.System_r.modInverse(THMDEM.System_T);
             BigInteger x = Cx[i].multiply(r_).mod(THMDEM.System_T).mod(THMDEM.System_N);
             BigInteger res = x.divide(Cy[i]);
