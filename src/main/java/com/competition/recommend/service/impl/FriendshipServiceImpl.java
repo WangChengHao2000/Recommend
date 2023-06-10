@@ -94,7 +94,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 //                user.setType("user");
 //        });
 
-
     }
 
     @Override
