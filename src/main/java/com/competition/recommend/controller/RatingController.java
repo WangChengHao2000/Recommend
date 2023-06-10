@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +61,10 @@ public class RatingController {
 
         User user = userService.getUserByUserId(Long.valueOf(request.getParameter("userId")));
         String rating = request.getParameter("rating");
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         BigInteger[] userKey = THMDEM.UserKeyGen();
         Map<String,String> map = THMDEM.Encrypt(Integer.parseInt(rating),userKey[0],userKey[1],userKey[3],userKey[4],
-                new BigInteger(user.getP0()),userKey[6],userKey[7],THMDEM.pk_ser,THMDEM.pk_csp);
+                new BigInteger(user.getP0().replace("\t","")),userKey[6],userKey[7],THMDEM.pk_ser,THMDEM.pk_csp);
 //C_ser,C_ser_tag,C_csp,C,C_tag
 
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
