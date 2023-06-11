@@ -20,8 +20,6 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     private RatingRepository ratingRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Override
     public List<Rating> getAllByUserId(Long userId) {

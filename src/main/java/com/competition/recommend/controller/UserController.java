@@ -46,9 +46,7 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RecommendResponse<Object> createUser(HttpServletRequest request) {
-//        RecommendResponse<Object> response = isAdmin(request);
-//        if (response != null)
-//            return response;
+
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         KeyPair sm2Key = MySM2.createSm2Key();
         //获取公钥

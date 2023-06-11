@@ -23,10 +23,11 @@ public class Movie implements Comparable<Movie>{
 
     private int count;
 
-    private Integer rating;
+    private Double rating;
 
     @Override
     public int compareTo(Movie o) {
-        return o.getRating()-this.getRating();
+        return o.getRating().compareTo(this.getRating());
+
     }
 }

@@ -212,11 +212,12 @@ public class MovieServiceImpl implements MovieService {
             BigInteger res = x.divide(Cy[i]);
             long a = x.longValue();
             long b = Cy[i].longValue();
-            double result = (double)a*100/ (double) b;
-            if(result>=1){
+            double result = (double)a/ (double) b;
+            if(result>=1.0){
                 Movie nowMovie = movieRepository.findById(movieIds.get(i)).orElse(null);
                 assert nowMovie != null;
-                nowMovie.setRating((int)result);
+                String str = String.format("%.1f",result);
+                nowMovie.setRating(2+Double.parseDouble(str));
                 recoMovie.add(nowMovie);
             }
         }

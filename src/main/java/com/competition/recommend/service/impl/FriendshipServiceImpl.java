@@ -39,7 +39,7 @@ public class FriendshipServiceImpl implements FriendshipService {
             assert friend != null;
 
             Long friendId = friend.getId();
-
+            friendship.setFriendId(friendId);
             List<Rating> userRatings = ratingRepository.findAllByUserId(userId);
             List<Rating> friendRatings = ratingRepository.findAllByUserId(friendId);
 
