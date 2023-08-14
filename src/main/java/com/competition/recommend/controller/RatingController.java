@@ -68,18 +68,24 @@ public class RatingController {
 
         System.out.println("正在为用户"+user.getUsername()+"加密对电影"+request.getParameter("title")+"的评分");
         System.out.println("待加密的评分为："+rating);
+        System.out.println();
         stopWatch.start();
         BigInteger[] userKey = THMDEM.UserKeyGen();
+        System.out.println("公钥为：");
+        System.out.println("服务器SER的SM2公钥："+THMDEM.pk_ser);
+        System.out.println("服务器CSP的SM2公钥："+THMDEM.pk_csp);
+        System.out.println("对称加密算法的公开参数T："+userKey[4]);
+        System.out.println("对称加密算法的公开参数p0："+user.getP0());
         Map<String,String> map = THMDEM.Encrypt(Integer.parseInt(rating),userKey[0],userKey[1],userKey[3],userKey[4],
                 new BigInteger(user.getP0().replace("\t","")),userKey[6],userKey[7],THMDEM.pk_ser,THMDEM.pk_csp);
 //C_ser,C_ser_tag,C_csp,C,C_tag
         stopWatch.stop();
+        System.out.println();
         System.out.println("加密结果为：");
-        System.out.println("C_ser:"+map.get("C_ser"));
-        System.out.println("C_ser_tag:"+map.get("C_ser_tag"));
-        System.out.println("C_csp:"+map.get("C_csp"));
-        System.out.println("(C:"+map.get("C")+",C_tag:"+map.get("C_tag")+")");
+        System.out.println("C:"+map.get("C"));
+        System.out.println("C_tag:"+map.get("C_tag"));
         System.out.printf("加密耗时：%d 毫秒.%n", stopWatch.getTotalTimeMillis());
+        System.out.println();
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
                 Long.parseLong(request.getParameter("movieId")),
                 request.getParameter("title"),

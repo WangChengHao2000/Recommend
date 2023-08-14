@@ -55,7 +55,7 @@ public class User {
         this.gender = gender;
         this.occupation = occupation;
         this.publickey = publickey;
-        this.privatekey = publickey;
+        this.privatekey = privatekey;
         this.p0 = p0;
 
     }
