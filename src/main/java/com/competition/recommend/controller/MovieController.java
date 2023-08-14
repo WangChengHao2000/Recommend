@@ -102,7 +102,10 @@ public class MovieController {
         for (int i = 0; i < 1; i++) {
             strangerId[i] = strangers.get(list.get(i)).getId();
         }
+        System.out.println("正在随机挑选陌生人············");
+        System.out.println("正在确定朋友列表·············");
         List<Movie> movies = movieService.getRecommendMovies(userId,strangerId);
+
         return new RecommendResponse<>(RecommendStatus.SUCCESS, movies);
     }
 }

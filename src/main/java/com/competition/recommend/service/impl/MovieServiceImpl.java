@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -65,6 +66,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getRecommendMovies(Long userId, Long[] strangerId) {
+        StopWatch stopWatch = new StopWatch();
+
+        System.out.println("正在利用双服务器转换并计算每个朋友的评分密文···········");
         List<Long> movieIds = new ArrayList<>();
         List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
         int friendNumber = friendships.size();
@@ -94,9 +98,9 @@ public class MovieServiceImpl implements MovieService {
                 M_friend_avg[i][1] = M_friend_avg[i][1].add(BigInteger.valueOf(1));
                 M_friend_avg[i][0] = M_friend_avg[i][0].add(cmpResult.multiply(C_ser)).mod(THMDEM.System_T);
             }
-            System.out.println(M_friend_avg[i][0].multiply(THMDEM.System_r.modInverse(THMDEM.System_N)).mod(THMDEM.System_N));
         }
 
+        System.out.println("正在利用双服务器转换并计算每个陌生人的评分密文···········");
         //获取每个stranger的平均评分  avg = avg[0]/avg[1].
         int strangerNumber = strangerId.length;
         BigInteger[][] M_stranger_avg = new BigInteger[strangerNumber][2];
@@ -131,14 +135,16 @@ public class MovieServiceImpl implements MovieService {
             movieIds.remove(rating.getMovieId());
         }
 
+
         //计算friend和stranger的推荐评分
+        System.out.println("正在计算对用户"+ Objects.requireNonNull(userRepository.findById(userId).orElse(null)).getUsername()+"的推荐结果·······");
+        stopWatch.start();
         int movieNumber = movieIds.size();
         BigInteger[][] M_friend = new BigInteger[movieNumber][2];
         int[] N_friend = new int[movieNumber];
         BigInteger[][] M_stranger = new BigInteger[movieNumber][2];
         int[] N_stranger = new int[movieNumber];
         for (int i = 0; i < movieNumber; i++) {
-            System.out.println(i);
             M_friend[i][0] = BigInteger.valueOf(0);
             M_friend[i][1] = BigInteger.valueOf(1);
             N_friend[i] = 0;
@@ -199,6 +205,8 @@ public class MovieServiceImpl implements MovieService {
             M_friend[i][1] = M_friend[i][1].multiply(BigInteger.valueOf(N_friend[i]));
             M_stranger[i][1] = M_stranger[i][1].multiply(BigInteger.valueOf(N_stranger[i]));
         }
+        stopWatch.stop();
+        System.out.printf("计算完成，总计耗时：%d 毫秒.%n", stopWatch.getTotalTimeMillis());
         BigInteger[] Cx = new BigInteger[movieNumber];
         BigInteger[] Cy = new BigInteger[movieNumber];
 
