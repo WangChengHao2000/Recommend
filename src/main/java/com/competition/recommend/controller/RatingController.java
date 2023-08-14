@@ -5,8 +5,10 @@ import com.competition.recommend.service.MovieService;
 import com.competition.recommend.service.RatingService;
 import com.competition.recommend.service.UserService;
 import com.competition.recommend.util.THMDEM;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,15 +60,26 @@ public class RatingController {
 
     @RequestMapping(value = "/addRating", method = RequestMethod.POST)
     public RecommendResponse<Object> addRating(HttpServletRequest request) {
-
+        StopWatch stopWatch = new StopWatch();
         User user = userService.getUserByUserId(Long.valueOf(request.getParameter("userId")));
         String rating = request.getParameter("rating");
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
+
+
+        System.out.println("正在为用户"+user.getUsername()+"加密对电影"+request.getParameter("title")+"的评分");
+        System.out.println("待加密的评分为："+rating);
+        stopWatch.start();
         BigInteger[] userKey = THMDEM.UserKeyGen();
         Map<String,String> map = THMDEM.Encrypt(Integer.parseInt(rating),userKey[0],userKey[1],userKey[3],userKey[4],
                 new BigInteger(user.getP0().replace("\t","")),userKey[6],userKey[7],THMDEM.pk_ser,THMDEM.pk_csp);
 //C_ser,C_ser_tag,C_csp,C,C_tag
-
+        stopWatch.stop();
+        System.out.println("加密结果为：");
+        System.out.println("C_ser:"+map.get("C_ser"));
+        System.out.println("C_ser_tag:"+map.get("C_ser_tag"));
+        System.out.println("C_csp:"+map.get("C_csp"));
+        System.out.println("(C:"+map.get("C")+",C_tag:"+map.get("C_tag")+")");
+        System.out.printf("加密耗时：%d 毫秒.%n", stopWatch.getTotalTimeMillis());
         ratingService.addRating(Long.parseLong(request.getParameter("userId")),
                 Long.parseLong(request.getParameter("movieId")),
                 request.getParameter("title"),
